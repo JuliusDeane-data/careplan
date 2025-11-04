@@ -1,0 +1,3 @@
+the vacation module is the module to create the vacation plan for the employees of a location. a looged in employee can see a calendar view of a given month with the days of the month from left to right and the names of the employees of this location from top to bottom. The employee can click on one or more days in the row with his name to mark them and mark them as application for vacation. he can also see the days other employees marked as vacation. If he send a new application, his superior gets notified to either allow or deny it, he can also make changes to it.
+
+the module gets the total vacation days from the employees profile and keeps track of the remaining days.
