@@ -134,22 +134,21 @@ class User(AbstractUser):
     termination_date = models.DateField(null=True, blank=True)
     termination_reason = models.TextField(blank=True)
 
-    # Location relationships (temporarily commented out to avoid circular dependency in migrations)
-    # Will be added back in migration 0002
-    # primary_location = models.ForeignKey(
-    #     'locations.Location',
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    #     related_name='primary_employees',
-    #     help_text='Primary work location'
-    # )
-    # additional_locations = models.ManyToManyField(
-    #     'locations.Location',
-    #     related_name='additional_employees',
-    #     blank=True,
-    #     help_text='Additional locations where employee can work'
-    # )
+    # Location relationships
+    primary_location = models.ForeignKey(
+        'locations.Location',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='primary_employees',
+        help_text='Primary work location'
+    )
+    additional_locations = models.ManyToManyField(
+        'locations.Location',
+        related_name='additional_employees',
+        blank=True,
+        help_text='Additional locations where employee can work'
+    )
 
     # Supervisor relationship (self-referential)
     supervisor = models.ForeignKey(
@@ -217,7 +216,7 @@ class User(AbstractUser):
             models.Index(fields=['employee_id']),
             models.Index(fields=['role']),
             models.Index(fields=['employment_status']),
-            # models.Index(fields=['primary_location']),  # Will be added in migration 0002
+            # primary_location already has an index (ForeignKey auto-creates one)
         ]
 
     def __str__(self):
@@ -281,14 +280,12 @@ class User(AbstractUser):
         Returns:
             bool: True if employee can work at location
         """
-        # Temporarily disabled until location fields are added in migration 0002
-        # if not location:
-        #     return False
-        # return (
-        #     self.primary_location == location or
-        #     location in self.additional_locations.all()
-        # )
-        return False  # Placeholder
+        if not location:
+            return False
+        return (
+            self.primary_location == location or
+            location in self.additional_locations.all()
+        )
 
     def update_vacation_balance(self):
         """

@@ -74,7 +74,7 @@ def paginate_queryset(queryset, page, page_size=50):
     return page_obj, page_obj.has_next(), page_obj.has_previous()
 
 
-def send_notification(user, notification_type, **kwargs):
+def send_notification(user, notification_type, title, message, **kwargs):
     """
     Send a notification to a user.
 
@@ -84,33 +84,57 @@ def send_notification(user, notification_type, **kwargs):
     Args:
         user: User object to notify
         notification_type: Type of notification (from NotificationType choices)
-        **kwargs: Additional data for the notification (title, message, link, etc.)
+        title: Notification title
+        message: Notification message
+        **kwargs: Additional data (action_url, related_object, created_by, etc.)
 
     Returns:
-        Notification object
+        Notification object or None
 
     Example:
         send_notification(
-            user=employee.user,
-            notification_type=NotificationType.VACATION_APPROVED,
+            user=employee,
+            notification_type=NotificationType.VACATION_REQUEST_APPROVED,
             title='Vacation Request Approved',
-            message='Your vacation request has been approved.',
-            link='/vacation/requests/123/'
+            message='Your vacation request from Jan 1-5 has been approved.',
+            action_url='/vacation/requests/123/',
+            related_object=vacation_request,
+            created_by=manager
         )
     """
     try:
-        from apps.notifications.models import Notification
+        from apps.notifications.models import Notification, NotificationPreference
 
+        # Check user preferences
+        try:
+            prefs = NotificationPreference.objects.get(user=user)
+            if not prefs.should_notify(notification_type):
+                return None
+            if prefs.is_in_quiet_hours():
+                return None
+        except NotificationPreference.DoesNotExist:
+            # No preferences set, proceed with notification
+            pass
+
+        # Create notification
         notification = Notification.objects.create(
             recipient=user,
             notification_type=notification_type,
-            title=kwargs.get('title', ''),
-            message=kwargs.get('message', ''),
-            link=kwargs.get('link', ''),
-            sender=kwargs.get('sender', None),
+            title=title,
+            message=message,
+            action_url=kwargs.get('action_url', ''),
+            created_by=kwargs.get('created_by', None),
+            updated_by=kwargs.get('created_by', None),
         )
 
-        # Email sending will be handled by Celery task in notifications app
+        # Set related object if provided
+        related_object = kwargs.get('related_object')
+        if related_object:
+            notification.related_object = related_object
+            notification.save()
+
+        # TODO: Send email notification via Celery task if email_notifications_enabled
+
         return notification
     except ImportError:
         # Notifications app not yet created

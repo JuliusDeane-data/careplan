@@ -28,7 +28,14 @@ class Location(BaseModel):
         default=50,
         help_text='Maximum number of patients/residents'
     )
-    # manager field will be added in a later migration to avoid circular dependency
+    manager = models.ForeignKey(
+        'accounts.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='managed_locations',
+        help_text='Manager responsible for this location'
+    )
     is_active = models.BooleanField(
         default=True,
         help_text='Whether this location is currently active'
@@ -45,6 +52,7 @@ class Location(BaseModel):
 
     def get_employee_count(self):
         """Get the number of employees assigned to this location."""
+        from apps.accounts.models import User
         return self.primary_employees.filter(
-            employment_status='ACTIVE'
+            employment_status=User.EmploymentStatus.ACTIVE
         ).count()

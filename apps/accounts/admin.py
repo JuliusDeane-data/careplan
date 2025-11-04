@@ -14,18 +14,18 @@ class UserAdmin(BaseUserAdmin):
 
     list_display = [
         'username', 'employee_id', 'get_full_name', 'email',
-        'role', 'job_title', 'employment_status', 'is_active'  # primary_location temporarily removed
+        'role', 'job_title', 'employment_status', 'primary_location', 'is_active'
     ]
     list_filter = [
         'role', 'employment_status', 'employment_type',
-        'is_staff', 'is_active', 'gender'  # primary_location temporarily removed
+        'primary_location', 'is_staff', 'is_active', 'gender'
     ]
     search_fields = [
         'username', 'employee_id', 'first_name', 'last_name',
         'email', 'job_title', 'phone'
     ]
     readonly_fields = ['remaining_vacation_days', 'last_login', 'date_joined']
-    filter_horizontal = ['groups', 'user_permissions', 'qualifications']  # additional_locations temporarily removed
+    filter_horizontal = ['groups', 'user_permissions', 'qualifications', 'additional_locations']
     ordering = ['employee_id']
 
     fieldsets = (
