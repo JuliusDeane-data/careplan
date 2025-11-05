@@ -3,6 +3,8 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import LoginPage from '@/pages/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
+import VacationListPage from '@/pages/vacation/VacationListPage'
+import VacationRequestPage from '@/pages/vacation/VacationRequestPage'
 
 function App() {
   return (
@@ -15,6 +17,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vacation"
+            element={
+              <ProtectedRoute>
+                <VacationListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vacation/new"
+            element={
+              <ProtectedRoute>
+                <VacationRequestPage />
               </ProtectedRoute>
             }
           />

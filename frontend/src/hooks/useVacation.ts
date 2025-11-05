@@ -13,7 +13,6 @@ export function useVacationRequests(filters?: VacationFilters) {
   return useQuery({
     queryKey: ['vacation-requests', filters],
     queryFn: () => vacationService.getRequests(filters),
-    keepPreviousData: true,
   })
 }
 
@@ -58,9 +57,9 @@ export function useCreateVacationRequest() {
     mutationFn: (data: VacationRequestCreate) => vacationService.createRequest(data),
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries(['my-vacation-requests'])
-      queryClient.invalidateQueries(['vacation-requests'])
-      queryClient.invalidateQueries(['vacation-balance'])
+      queryClient.invalidateQueries({ queryKey: ['my-vacation-requests'] })
+      queryClient.invalidateQueries({ queryKey: ['vacation-requests'] })
+      queryClient.invalidateQueries({ queryKey: ['vacation-balance'] })
     },
   })
 }
@@ -74,9 +73,9 @@ export function useCancelVacationRequest() {
   return useMutation({
     mutationFn: (id: number) => vacationService.cancelRequest(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['my-vacation-requests'])
-      queryClient.invalidateQueries(['vacation-requests'])
-      queryClient.invalidateQueries(['vacation-balance'])
+      queryClient.invalidateQueries({ queryKey: ['my-vacation-requests'] })
+      queryClient.invalidateQueries({ queryKey: ['vacation-requests'] })
+      queryClient.invalidateQueries({ queryKey: ['vacation-balance'] })
     },
   })
 }
@@ -90,8 +89,8 @@ export function useApproveVacationRequest() {
   return useMutation({
     mutationFn: (id: number) => vacationService.approveRequest(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['vacation-requests'])
-      queryClient.invalidateQueries(['vacation-balance'])
+      queryClient.invalidateQueries({ queryKey: ['vacation-requests'] })
+      queryClient.invalidateQueries({ queryKey: ['vacation-balance'] })
     },
   })
 }
@@ -106,7 +105,7 @@ export function useDenyVacationRequest() {
     mutationFn: ({ id, data }: { id: number; data: VacationDenyRequest }) =>
       vacationService.denyRequest(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['vacation-requests'])
+      queryClient.invalidateQueries({ queryKey: ['vacation-requests'] })
     },
   })
 }

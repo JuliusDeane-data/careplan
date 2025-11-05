@@ -89,11 +89,11 @@ export default function DashboardPage() {
               <CardDescription>Common tasks</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => navigate('/vacation/new')}>
                 Request Vacation
               </Button>
-              <Button className="w-full" variant="outline">
-                View Schedule
+              <Button className="w-full" variant="outline" onClick={() => navigate('/vacation')}>
+                View My Vacations
               </Button>
             </CardContent>
           </Card>
