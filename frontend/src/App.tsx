@@ -7,6 +7,8 @@ import LoginPage from '@/pages/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
 import VacationListPage from '@/pages/vacation/VacationListPage'
 import VacationRequestPage from '@/pages/vacation/VacationRequestPage'
+import EmployeeListPage from '@/pages/employees/EmployeeListPage'
+import EmployeeDetailPage from '@/pages/employees/EmployeeDetailPage'
 
 function App() {
   return (
@@ -36,6 +38,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <VacationRequestPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/employees"
+              element={
+                <ProtectedRoute>
+                  <EmployeeListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/employees/:id"
+              element={
+                <ProtectedRoute>
+                  <EmployeeDetailPage />
                 </ProtectedRoute>
               }
             />
