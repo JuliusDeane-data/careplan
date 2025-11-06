@@ -1,10 +1,12 @@
-import { format } from 'date-fns'
 import { Calendar, Clock } from 'lucide-react'
+import { toast } from 'sonner'
 import type { VacationRequest } from '@/types/vacation'
-import { VacationStatusLabels } from '@/types/vacation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useCancelVacationRequest } from '@/hooks/useVacation'
+import { VACATION_STATUS_STYLES } from '@/config/theme'
+import { formatVacationDate, formatDateRange } from '@/utils/dateUtils'
+import { getErrorMessage } from '@/utils/errorHandler'
 
 interface VacationCardProps {
   request: VacationRequest
@@ -14,35 +16,21 @@ export default function VacationCard({ request }: VacationCardProps) {
   const cancelMutation = useCancelVacationRequest()
 
   const handleCancel = async () => {
-    if (window.confirm('Are you sure you want to cancel this vacation request?')) {
+    // Better confirmation dialog with context
+    const confirmed = window.confirm(
+      `Are you sure you want to cancel your vacation from ${formatVacationDate(request.start_date)} to ${formatVacationDate(request.end_date)}?`
+    )
+
+    if (confirmed) {
+      const toastId = toast.loading('Cancelling vacation request...')
+
       try {
         await cancelMutation.mutateAsync(request.id)
+        toast.success('Vacation request cancelled successfully', { id: toastId })
       } catch (error) {
-        console.error('Failed to cancel request:', error)
+        const errorMessage = getErrorMessage(error)
+        toast.error(errorMessage, { id: toastId })
       }
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-      case 'APPROVED':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-      case 'DENIED':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-      case 'CANCELLED':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const formatDate = (dateStr: string) => {
-    try {
-      return format(new Date(dateStr), 'MMM d, yyyy')
-    } catch {
-      return dateStr
     }
   }
 
@@ -56,7 +44,7 @@ export default function VacationCard({ request }: VacationCardProps) {
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <span className="font-medium">
-                {formatDate(request.start_date)} - {formatDate(request.end_date)}
+                {formatDateRange(request.start_date, request.end_date)}
               </span>
             </div>
 
@@ -97,13 +85,15 @@ export default function VacationCard({ request }: VacationCardProps) {
 
           {/* Right side - Status and actions */}
           <div className="flex flex-col items-end gap-3">
-            {/* Status Badge */}
+            {/* Status Badge with accessibility */}
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                request.status
-              )}`}
+              role="status"
+              aria-label={`Status: ${VACATION_STATUS_STYLES[request.status].label} - ${VACATION_STATUS_STYLES[request.status].description}`}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                VACATION_STATUS_STYLES[request.status].badge
+              }`}
             >
-              {VacationStatusLabels[request.status]}
+              {VACATION_STATUS_STYLES[request.status].label}
             </span>
 
             {/* Cancel Button - only show for pending requests */}
@@ -113,6 +103,7 @@ export default function VacationCard({ request }: VacationCardProps) {
                 size="sm"
                 onClick={handleCancel}
                 disabled={cancelMutation.isPending}
+                aria-label={`Cancel vacation request from ${formatVacationDate(request.start_date)} to ${formatVacationDate(request.end_date)}`}
               >
                 {cancelMutation.isPending ? 'Cancelling...' : 'Cancel'}
               </Button>
