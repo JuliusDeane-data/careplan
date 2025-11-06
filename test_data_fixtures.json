@@ -1,0 +1,756 @@
+[
+  {
+    "model": "locations.location",
+    "pk": 1,
+    "fields": {
+      "name": "Sunshine Care Home - Central",
+      "address": "123 Main Street",
+      "city": "Berlin",
+      "postal_code": "10115",
+      "country": "Germany",
+      "phone": "+49 30 12345678",
+      "email": "central@sunshinecare.de",
+      "max_capacity": 80,
+      "is_active": true,
+      "created_at": "2023-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 2,
+    "fields": {
+      "name": "Sunshine Care Home - North",
+      "address": "456 Oak Avenue",
+      "city": "Hamburg",
+      "postal_code": "20095",
+      "country": "Germany",
+      "phone": "+49 40 98765432",
+      "email": "north@sunshinecare.de",
+      "max_capacity": 60,
+      "is_active": true,
+      "created_at": "2023-03-20T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 3,
+    "fields": {
+      "name": "Sunshine Care Home - South",
+      "address": "789 Pine Road",
+      "city": "Munich",
+      "postal_code": "80331",
+      "country": "Germany",
+      "phone": "+49 89 55544433",
+      "email": "south@sunshinecare.de",
+      "max_capacity": 50,
+      "is_active": true,
+      "created_at": "2023-06-10T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "locations.location",
+    "pk": 4,
+    "fields": {
+      "name": "Sunshine Care Home - East",
+      "address": "321 Elm Street",
+      "city": "Dresden",
+      "postal_code": "01067",
+      "country": "Germany",
+      "phone": "+49 351 22334455",
+      "email": "east@sunshinecare.de",
+      "max_capacity": 40,
+      "is_active": true,
+      "created_at": "2023-09-01T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "employees.qualification",
+    "pk": 1,
+    "fields": {
+      "code": "RN",
+      "name": "Registered Nurse",
+      "description": "Licensed registered nurse qualification",
+      "required_for_roles": "NURSE",
+      "is_active": true,
+      "created_at": "2023-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "employees.qualification",
+    "pk": 2,
+    "fields": {
+      "code": "CNA",
+      "name": "Certified Nursing Assistant",
+      "description": "Certified nursing assistant certification",
+      "required_for_roles": "CARE_WORKER",
+      "is_active": true,
+      "created_at": "2023-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "employees.qualification",
+    "pk": 3,
+    "fields": {
+      "code": "BLS",
+      "name": "Basic Life Support",
+      "description": "Basic life support certification",
+      "required_for_roles": "NURSE, CARE_WORKER",
+      "is_active": true,
+      "created_at": "2023-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "employees.qualification",
+    "pk": 4,
+    "fields": {
+      "code": "ACLS",
+      "name": "Advanced Cardiovascular Life Support",
+      "description": "Advanced life support for cardiac emergencies",
+      "required_for_roles": "NURSE",
+      "is_active": true,
+      "created_at": "2023-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin001",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Sarah",
+      "last_name": "Anderson",
+      "email": "sarah.anderson@sunshinecare.de",
+      "is_staff": true,
+      "is_superuser": true,
+      "is_active": true,
+      "employee_id": "EMP001",
+      "role": "ADMIN",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "System Administrator",
+      "department": "IT & Administration",
+      "phone": "+49 30 11111111",
+      "date_of_birth": "1985-03-15",
+      "gender": "FEMALE",
+      "hire_date": "2022-01-10",
+      "annual_vacation_days": 30,
+      "remaining_vacation_days": 18,
+      "primary_location": 1,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2022-01-10T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+      "username": "mgr001",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Michael",
+      "last_name": "Schmidt",
+      "email": "michael.schmidt@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP002",
+      "role": "MANAGER",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Care Manager",
+      "department": "Care Management",
+      "phone": "+49 30 22222222",
+      "date_of_birth": "1980-07-22",
+      "gender": "MALE",
+      "hire_date": "2022-03-01",
+      "annual_vacation_days": 28,
+      "remaining_vacation_days": 15,
+      "primary_location": 1,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2022-03-01T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+      "username": "nurse001",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Emma",
+      "last_name": "Mueller",
+      "email": "emma.mueller@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP003",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Registered Nurse",
+      "department": "Nursing",
+      "phone": "+49 30 33333333",
+      "date_of_birth": "1990-11-08",
+      "gender": "FEMALE",
+      "hire_date": "2023-01-15",
+      "annual_vacation_days": 26,
+      "remaining_vacation_days": 20,
+      "primary_location": 1,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-01-15T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 4,
+    "fields": {
+      "username": "nurse002",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Lisa",
+      "last_name": "Weber",
+      "email": "lisa.weber@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP004",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Registered Nurse",
+      "department": "Nursing",
+      "phone": "+49 30 44444444",
+      "date_of_birth": "1988-05-20",
+      "gender": "FEMALE",
+      "hire_date": "2023-02-01",
+      "annual_vacation_days": 26,
+      "remaining_vacation_days": 12,
+      "primary_location": 1,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-02-01T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 5,
+    "fields": {
+      "username": "care001",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Thomas",
+      "last_name": "Fischer",
+      "email": "thomas.fischer@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP005",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Care Worker",
+      "department": "Direct Care",
+      "phone": "+49 30 55555555",
+      "date_of_birth": "1992-09-12",
+      "gender": "MALE",
+      "hire_date": "2023-04-10",
+      "annual_vacation_days": 24,
+      "remaining_vacation_days": 16,
+      "primary_location": 1,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-04-10T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 6,
+    "fields": {
+      "username": "care002",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Anna",
+      "last_name": "Hoffmann",
+      "email": "anna.hoffmann@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP006",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "PART_TIME",
+      "job_title": "Care Worker",
+      "department": "Direct Care",
+      "phone": "+49 30 66666666",
+      "date_of_birth": "1995-02-28",
+      "gender": "FEMALE",
+      "hire_date": "2023-05-15",
+      "annual_vacation_days": 20,
+      "remaining_vacation_days": 18,
+      "primary_location": 1,
+      "contract_hours_per_week": "30.00",
+      "created_at": "2023-05-15T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 7,
+    "fields": {
+      "username": "mgr002",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Julia",
+      "last_name": "Becker",
+      "email": "julia.becker@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP007",
+      "role": "MANAGER",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Care Manager",
+      "department": "Care Management",
+      "phone": "+49 40 77777777",
+      "date_of_birth": "1983-12-05",
+      "gender": "FEMALE",
+      "hire_date": "2022-06-01",
+      "annual_vacation_days": 28,
+      "remaining_vacation_days": 22,
+      "primary_location": 2,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2022-06-01T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 8,
+    "fields": {
+      "username": "nurse003",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Marcus",
+      "last_name": "Schneider",
+      "email": "marcus.schneider@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP008",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Registered Nurse",
+      "department": "Nursing",
+      "phone": "+49 40 88888888",
+      "date_of_birth": "1987-04-18",
+      "gender": "MALE",
+      "hire_date": "2023-03-20",
+      "annual_vacation_days": 26,
+      "remaining_vacation_days": 14,
+      "primary_location": 2,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-03-20T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 9,
+    "fields": {
+      "username": "care003",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Sophie",
+      "last_name": "Klein",
+      "email": "sophie.klein@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP009",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Care Worker",
+      "department": "Direct Care",
+      "phone": "+49 40 99999999",
+      "date_of_birth": "1993-08-25",
+      "gender": "FEMALE",
+      "hire_date": "2023-07-01",
+      "annual_vacation_days": 24,
+      "remaining_vacation_days": 22,
+      "primary_location": 2,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-07-01T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 10,
+    "fields": {
+      "username": "care004",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Lukas",
+      "last_name": "Wagner",
+      "email": "lukas.wagner@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP010",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Care Worker",
+      "department": "Direct Care",
+      "phone": "+49 89 10101010",
+      "date_of_birth": "1991-06-30",
+      "gender": "MALE",
+      "hire_date": "2023-08-15",
+      "annual_vacation_days": 24,
+      "remaining_vacation_days": 20,
+      "primary_location": 3,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-08-15T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 11,
+    "fields": {
+      "username": "nurse004",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Maria",
+      "last_name": "Richter",
+      "email": "maria.richter@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP011",
+      "role": "EMPLOYEE",
+      "employment_status": "ON_LEAVE",
+      "employment_type": "FULL_TIME",
+      "job_title": "Registered Nurse",
+      "department": "Nursing",
+      "phone": "+49 89 11111122",
+      "date_of_birth": "1989-10-14",
+      "gender": "FEMALE",
+      "hire_date": "2023-02-20",
+      "annual_vacation_days": 26,
+      "remaining_vacation_days": 5,
+      "primary_location": 3,
+      "contract_hours_per_week": "40.00",
+      "created_at": "2023-02-20T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 12,
+    "fields": {
+      "username": "care005",
+      "password": "pbkdf2_sha256$720000$testpassword123456789012$dummy==",
+      "first_name": "Daniel",
+      "last_name": "Koch",
+      "email": "daniel.koch@sunshinecare.de",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "employee_id": "EMP012",
+      "role": "EMPLOYEE",
+      "employment_status": "ACTIVE",
+      "employment_type": "PART_TIME",
+      "job_title": "Care Worker",
+      "department": "Direct Care",
+      "phone": "+49 351 12121212",
+      "date_of_birth": "1994-03-07",
+      "gender": "MALE",
+      "hire_date": "2023-09-10",
+      "annual_vacation_days": 20,
+      "remaining_vacation_days": 19,
+      "primary_location": 4,
+      "contract_hours_per_week": "30.00",
+      "created_at": "2023-09-10T08:00:00Z",
+      "updated_at": "2025-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 1,
+    "fields": {
+      "date": "2025-01-01",
+      "name": "New Year's Day",
+      "description": "New Year celebration",
+      "is_nationwide": true,
+      "is_recurring": true,
+      "recurring_month": 1,
+      "recurring_day": 1,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 2,
+    "fields": {
+      "date": "2025-04-18",
+      "name": "Good Friday",
+      "description": "Christian holiday",
+      "is_nationwide": true,
+      "is_recurring": false,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 3,
+    "fields": {
+      "date": "2025-04-21",
+      "name": "Easter Monday",
+      "description": "Christian holiday",
+      "is_nationwide": true,
+      "is_recurring": false,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 4,
+    "fields": {
+      "date": "2025-05-01",
+      "name": "Labour Day",
+      "description": "International Workers' Day",
+      "is_nationwide": true,
+      "is_recurring": true,
+      "recurring_month": 5,
+      "recurring_day": 1,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 5,
+    "fields": {
+      "date": "2025-10-03",
+      "name": "Day of German Unity",
+      "description": "German reunification day",
+      "is_nationwide": true,
+      "is_recurring": true,
+      "recurring_month": 10,
+      "recurring_day": 3,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 6,
+    "fields": {
+      "date": "2025-12-25",
+      "name": "Christmas Day",
+      "description": "Christmas celebration",
+      "is_nationwide": true,
+      "is_recurring": true,
+      "recurring_month": 12,
+      "recurring_day": 25,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.publicholiday",
+    "pk": 7,
+    "fields": {
+      "date": "2025-12-26",
+      "name": "Boxing Day",
+      "description": "Second day of Christmas",
+      "is_nationwide": true,
+      "is_recurring": true,
+      "recurring_month": 12,
+      "recurring_day": 26,
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 1,
+    "fields": {
+      "employee": 3,
+      "start_date": "2025-02-10",
+      "end_date": "2025-02-14",
+      "vacation_days": 5,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Winter vacation with family",
+      "status": "APPROVED",
+      "approved_by": 2,
+      "approved_at": "2025-01-05T14:30:00Z",
+      "created_at": "2025-01-05T10:00:00Z",
+      "updated_at": "2025-01-05T14:30:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 2,
+    "fields": {
+      "employee": 4,
+      "start_date": "2025-03-17",
+      "end_date": "2025-03-21",
+      "vacation_days": 5,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Spring break",
+      "status": "PENDING",
+      "created_at": "2025-01-20T09:15:00Z",
+      "updated_at": "2025-01-20T09:15:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 3,
+    "fields": {
+      "employee": 5,
+      "start_date": "2025-04-07",
+      "end_date": "2025-04-11",
+      "vacation_days": 5,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Family wedding",
+      "status": "APPROVED",
+      "approved_by": 2,
+      "approved_at": "2025-01-22T11:00:00Z",
+      "created_at": "2025-01-21T15:30:00Z",
+      "updated_at": "2025-01-22T11:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 4,
+    "fields": {
+      "employee": 6,
+      "start_date": "2025-06-23",
+      "end_date": "2025-07-04",
+      "vacation_days": 10,
+      "total_days": 12,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Summer vacation in Italy",
+      "status": "PENDING",
+      "created_at": "2025-01-25T13:45:00Z",
+      "updated_at": "2025-01-25T13:45:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 5,
+    "fields": {
+      "employee": 8,
+      "start_date": "2025-05-05",
+      "end_date": "2025-05-09",
+      "vacation_days": 5,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Visit parents",
+      "status": "APPROVED",
+      "approved_by": 7,
+      "approved_at": "2025-01-18T16:20:00Z",
+      "created_at": "2025-01-18T12:00:00Z",
+      "updated_at": "2025-01-18T16:20:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 6,
+    "fields": {
+      "employee": 9,
+      "start_date": "2025-02-03",
+      "end_date": "2025-02-07",
+      "vacation_days": 5,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Short winter break",
+      "status": "DENIED",
+      "denied_by": 7,
+      "denied_at": "2025-01-15T10:30:00Z",
+      "denial_reason": "Insufficient coverage during this period. Please request alternative dates.",
+      "created_at": "2025-01-14T14:00:00Z",
+      "updated_at": "2025-01-15T10:30:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 7,
+    "fields": {
+      "employee": 10,
+      "start_date": "2025-08-11",
+      "end_date": "2025-08-22",
+      "vacation_days": 10,
+      "total_days": 12,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Summer holiday with family",
+      "status": "PENDING",
+      "created_at": "2025-01-28T11:00:00Z",
+      "updated_at": "2025-01-28T11:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 8,
+    "fields": {
+      "employee": 11,
+      "start_date": "2024-12-20",
+      "end_date": "2025-01-10",
+      "vacation_days": 15,
+      "total_days": 22,
+      "request_type": "PARENTAL_LEAVE",
+      "reason": "Parental leave - new baby",
+      "status": "APPROVED",
+      "approved_by": 2,
+      "approved_at": "2024-12-01T09:00:00Z",
+      "created_at": "2024-11-15T10:00:00Z",
+      "updated_at": "2024-12-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 9,
+    "fields": {
+      "employee": 12,
+      "start_date": "2025-09-15",
+      "end_date": "2025-09-19",
+      "vacation_days": 5,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Autumn break",
+      "status": "PENDING",
+      "created_at": "2025-01-30T16:00:00Z",
+      "updated_at": "2025-01-30T16:00:00Z"
+    }
+  },
+  {
+    "model": "vacation.vacationrequest",
+    "pk": 10,
+    "fields": {
+      "employee": 3,
+      "start_date": "2024-12-23",
+      "end_date": "2024-12-27",
+      "vacation_days": 3,
+      "total_days": 5,
+      "request_type": "ANNUAL_LEAVE",
+      "reason": "Christmas holiday",
+      "status": "APPROVED",
+      "approved_by": 2,
+      "approved_at": "2024-11-20T10:00:00Z",
+      "created_at": "2024-11-15T14:00:00Z",
+      "updated_at": "2024-11-20T10:00:00Z"
+    }
+  }
+]
