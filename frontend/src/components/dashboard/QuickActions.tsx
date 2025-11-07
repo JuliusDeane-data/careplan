@@ -28,7 +28,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   {
     label: 'Request Vacation',
     icon: Calendar,
-    path: '/vacation/request',
+    path: '/vacation/new',
     roles: ['EMPLOYEE', 'MANAGER', 'ADMIN'],
     description: 'Submit a new vacation request',
   },
