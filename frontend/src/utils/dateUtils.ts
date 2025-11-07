@@ -202,6 +202,7 @@ export function getDaysUntil(startDate: string | Date): string {
     }
     
     const daysCount = differenceInCalendarDays(targetDate, today)
+    if (daysCount < 0) return `${Math.abs(daysCount)} days ago`
     if (daysCount === 0) return 'Today'
     if (daysCount === 1) return 'Tomorrow'
     return `in ${daysCount} days`
