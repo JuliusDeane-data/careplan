@@ -29,11 +29,6 @@ export function ConfirmDialog({
   onConfirm,
   variant = "default",
 }: ConfirmDialogProps) {
-  const handleConfirm = () => {
-    onConfirm()
-    onOpenChange(false)
-  }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -50,7 +45,7 @@ export function ConfirmDialog({
           </Button>
           <Button
             variant={variant}
-            onClick={handleConfirm}
+            onClick={onConfirm}
             autoFocus
           >
             {confirmLabel}

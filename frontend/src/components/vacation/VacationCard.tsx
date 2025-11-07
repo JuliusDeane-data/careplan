@@ -31,6 +31,8 @@ export default function VacationCard({ request }: VacationCardProps) {
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       toast.error(errorMessage, { id: toastId })
+    } finally {
+      setShowConfirmDialog(false)
     }
   }
 
