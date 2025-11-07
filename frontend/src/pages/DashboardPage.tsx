@@ -81,7 +81,7 @@ export default function DashboardPage() {
               description={`of ${stats?.personal.vacation_balance.total || 0} days`}
               icon={Calendar}
               iconColor="text-blue-600"
-              onClick={() => navigate('/vacation/request')}
+              onClick={() => navigate('/vacation/new')}
             />
             <StatsCard
               title="Pending Requests"
