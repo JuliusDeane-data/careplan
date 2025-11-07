@@ -6,8 +6,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useUpcomingEvents } from '@/hooks/useDashboard'
 import { Loader2, Calendar } from 'lucide-react'
-import { formatVacationDate } from '@/utils/dateUtils'
-import { differenceInDays } from 'date-fns'
+import { formatVacationDate, getDaysUntil, getEventDuration } from '@/utils/dateUtils'
 
 interface UpcomingVacationsProps {
   limit?: number
@@ -19,17 +18,6 @@ export default function UpcomingVacations({
   days = 30,
 }: UpcomingVacationsProps) {
   const { data: events, isLoading, error } = useUpcomingEvents(days)
-
-  const getDaysUntil = (startDate: string) => {
-    const daysCount = differenceInDays(new Date(startDate), new Date())
-    if (daysCount === 0) return 'Today'
-    if (daysCount === 1) return 'Tomorrow'
-    return `in ${daysCount} days`
-  }
-
-  const getEventDuration = (startDate: string, endDate: string) => {
-    return differenceInDays(new Date(endDate), new Date(startDate)) + 1
-  }
 
   return (
     <Card>

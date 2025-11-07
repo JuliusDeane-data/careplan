@@ -186,3 +186,40 @@ export function toISODateString(date: Date): string {
     return ''
   }
 }
+
+/**
+ * Gets a human-readable string for days until a date
+ * @param startDate - Target date (ISO string or Date)
+ * @returns Formatted string like "Today", "Tomorrow", or "in X days"
+ */
+export function getDaysUntil(startDate: string | Date): string {
+  try {
+    const targetDate = typeof startDate === 'string' ? parseISO(startDate) : startDate
+    const today = startOfDay(new Date())
+    
+    if (!isValid(targetDate)) {
+      return ''
+    }
+    
+    const daysCount = differenceInCalendarDays(targetDate, today)
+    if (daysCount < 0) return `${Math.abs(daysCount)} days ago`
+    if (daysCount === 0) return 'Today'
+    if (daysCount === 1) return 'Tomorrow'
+    return `in ${daysCount} days`
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * Calculates the duration of an event in days
+ * @param startDate - Start date (ISO string or Date)
+ * @param endDate - End date (ISO string or Date)
+ * @returns Number of days (inclusive)
+ */
+export function getEventDuration(
+  startDate: string | Date,
+  endDate: string | Date
+): number {
+  return calculateVacationDays(startDate, endDate)
+}
