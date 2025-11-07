@@ -97,7 +97,6 @@ def main():
     print(f"  • Locations:        {Location.objects.count()}")
     print(f"  • Employees:        {User.objects.count()}")
     print(f"  • Qualifications:   {Qualification.objects.count()}")
-    print(f"  • Vacation Requests: {User.objects.first().__class__.__module__.replace('.models', '')}")
 
     from apps.vacation.models import VacationRequest, PublicHoliday
     print(f"  • Vacation Requests: {VacationRequest.objects.count()}")
