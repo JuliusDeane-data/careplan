@@ -7,7 +7,9 @@
       "Bash(npm run dev:*)",
       "Bash(npm install:*)",
       "Bash(docker-compose exec:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd CLAUDE.md documentation, test credentials, and test data loader\n\n- Add comprehensive CLAUDE.md guide for future Claude Code instances\n- Add TEST_CREDENTIALS.txt with all test account details\n- Add load_simple_test_data.py script for easy test data loading\n- Configure QueryClient provider in React app for TanStack Query\n- Fix optional chaining for dashboard stats to prevent errors\n- Update Vite server to listen on 0.0.0.0 for better Docker compatibility\n- Update Claude settings with additional command permissions\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
