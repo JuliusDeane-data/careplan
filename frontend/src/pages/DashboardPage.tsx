@@ -15,6 +15,7 @@ import {
   UserCheck,
   Clock,
   Loader2,
+  User as UserIcon,
 } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -48,6 +49,10 @@ export default function DashboardPage() {
                 Employee Directory
               </Button>
             )}
+            <Button onClick={() => navigate('/profile')} variant="outline">
+              <UserIcon className="w-4 h-4 mr-2" />
+              My Profile
+            </Button>
             <Button onClick={handleLogout} variant="outline">
               Logout
             </Button>

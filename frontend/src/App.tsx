@@ -1,9 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import HomePage from '@/pages/HomePage'
 import LoginPage from '@/pages/LoginPage'
+import ProfilePage from '@/pages/ProfilePage'
 import DashboardPage from '@/pages/DashboardPage'
 import VacationListPage from '@/pages/vacation/VacationListPage'
 import VacationRequestPage from '@/pages/vacation/VacationRequestPage'
@@ -16,12 +18,24 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
+
+            {/* Protected Routes */}
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />
@@ -57,7 +71,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
           <Toaster position="top-right" richColors closeButton />
         </AuthProvider>
