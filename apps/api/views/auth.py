@@ -64,7 +64,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             data['user']['primary_location'] = {
                 'id': self.user.primary_location.id,
                 'name': self.user.primary_location.name,
-                'code': self.user.primary_location.code,
+                'city': self.user.primary_location.city,
             }
 
         return data
