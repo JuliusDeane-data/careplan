@@ -78,6 +78,7 @@ export default function HomePage() {
                   <Input
                     type="email"
                     placeholder="Email"
+                    aria-label="Email"
                     value={credentials.email}
                     onChange={(e) =>
                       setCredentials({ ...credentials, email: e.target.value })
@@ -88,6 +89,7 @@ export default function HomePage() {
                   <Input
                     type="password"
                     placeholder="Password"
+                    aria-label="Password"
                     value={credentials.password}
                     onChange={(e) =>
                       setCredentials({ ...credentials, password: e.target.value })
