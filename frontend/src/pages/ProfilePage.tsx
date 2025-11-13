@@ -285,12 +285,12 @@ export default function ProfilePage() {
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all"
                     style={{
-                      width: `${
-                        ((user.annual_vacation_days || 0) -
-                          (user.remaining_vacation_days || 0)) /
-                        (user.annual_vacation_days || 1) *
-                        100
-                      }%`,
+                      width:
+                        user.annual_vacation_days && user.annual_vacation_days > 0
+                          ? `${
+                              ((user.annual_vacation_days - (user.remaining_vacation_days || 0)) / user.annual_vacation_days) * 100
+                            }%`
+                          : '0%',
                     }}
                   />
                 </div>
