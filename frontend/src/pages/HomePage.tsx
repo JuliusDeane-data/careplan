@@ -335,13 +335,13 @@ export default function HomePage() {
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     onClick={() => setShowLogin(true)}
-                    className="hover:text-white transition"
+                    className="hover:text-white transition bg-transparent border-none p-0 m-0 cursor-pointer"
                   >
                     Employee Login
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
