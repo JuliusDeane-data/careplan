@@ -4,7 +4,7 @@
  * Includes login in header
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -35,10 +35,11 @@ export default function HomePage() {
   })
 
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate('/dashboard')
-    return null
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard')
+    }
+  }, [isAuthenticated, navigate])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -78,6 +79,10 @@ export default function HomePage() {
                   <Input
                     type="email"
                     placeholder="Email"
+
+                    aria-label="Email"
+                    autoComplete="email"
+
                     value={credentials.email}
                     onChange={(e) =>
                       setCredentials({ ...credentials, email: e.target.value })
@@ -88,6 +93,9 @@ export default function HomePage() {
                   <Input
                     type="password"
                     placeholder="Password"
+
+                    aria-label="Password"
+                    autoComplete="current-password"
                     value={credentials.password}
                     onChange={(e) =>
                       setCredentials({ ...credentials, password: e.target.value })
@@ -335,13 +343,13 @@ export default function HomePage() {
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     onClick={() => setShowLogin(true)}
-                    className="hover:text-white transition"
+                    className="hover:text-white transition bg-transparent border-none p-0 m-0 cursor-pointer"
                   >
                     Employee Login
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>

@@ -30,14 +30,14 @@ export default function ProfilePage() {
   const navigate = useNavigate()
   const { data: myCertifications, isLoading: certificationsLoading } = useMyCertifications()
 
-  if (!user) {
-    navigate('/login')
-    return null
-  }
-
   const handleLogout = async () => {
     await logout()
     navigate('/')
+  }
+
+  // User is guaranteed to exist due to ProtectedRoute wrapper
+  if (!user) {
+    return null
   }
 
   // Format date helper
@@ -53,7 +53,13 @@ export default function ProfilePage() {
   // Calculate years of service
   const getYearsOfService = () => {
     if (!user.hire_date) return 'N/A'
-    const years = new Date().getFullYear() - new Date(user.hire_date).getFullYear()
+    const hireDate = new Date(user.hire_date)
+    const today = new Date()
+    let years = today.getFullYear() - hireDate.getFullYear()
+    const monthDiff = today.getMonth() - hireDate.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < hireDate.getDate())) {
+      years--
+    }
     return years === 1 ? '1 year' : `${years} years`
   }
 
@@ -123,7 +129,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                   <Badge className={getStatusBadge()}>
-                    {user.employment_status?.replace('_', ' ')}
+                    {user.employment_status?.replaceAll('_', ' ')}
                   </Badge>
                 </div>
 
@@ -227,7 +233,7 @@ export default function ProfilePage() {
                     Employment Type
                   </p>
                   <p className="font-medium">
-                    {user.employment_type?.replace('_', ' ') || 'N/A'}
+                    {user.employment_type?.replaceAll('_', ' ') || 'N/A'}
                   </p>
                 </div>
               </div>
@@ -288,12 +294,12 @@ export default function ProfilePage() {
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all"
                     style={{
-                      width: `${
-                        ((user.annual_vacation_days || 0) -
-                          (user.remaining_vacation_days || 0)) /
-                        (user.annual_vacation_days || 1) *
-                        100
-                      }%`,
+                      width:
+                        user.annual_vacation_days && user.annual_vacation_days > 0
+                          ? `${
+                              ((user.annual_vacation_days - (user.remaining_vacation_days || 0)) / user.annual_vacation_days) * 100
+                            }%`
+                          : '0%',
                     }}
                   />
                 </div>
