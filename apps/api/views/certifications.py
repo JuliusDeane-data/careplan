@@ -5,6 +5,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -20,7 +21,7 @@ from apps.api.serializers.certifications import (
     CertificationVerifySerializer,
     ExpiringCertificationsSerializer
 )
-from apps.api.permissions import IsAdminOrManager, IsOwnerOrAdminOrManager
+from apps.api.permissions import IsAdminOrManager
 
 User = get_user_model()
 
@@ -169,6 +170,12 @@ class EmployeeQualificationViewSet(viewsets.ModelViewSet):
         employee_id = self.request.data.get('employee_id')
 
         if employee_id:
+            # Validate employee_id is a valid integer
+            try:
+                employee_id = int(employee_id)
+            except (TypeError, ValueError):
+                raise ValidationError({"employee_id": "Invalid employee_id"})
+
             # Validate employee access
             try:
                 employee = User.objects.get(id=employee_id, is_active=True)
@@ -187,7 +194,7 @@ class EmployeeQualificationViewSet(viewsets.ModelViewSet):
 
                 serializer.save(employee=employee, created_by=user)
             except User.DoesNotExist:
-                raise ValueError("Employee not found")
+                raise ValidationError({"employee_id": "Employee not found"})
         else:
             # No employee specified, create for current user
             serializer.save(employee=user, created_by=user)

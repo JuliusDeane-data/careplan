@@ -4,8 +4,7 @@ Shift scheduling models for ICU workforce management
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.utils import timezone
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 from apps.employees.models import BaseModel
 from apps.locations.models import Location
 
@@ -186,7 +185,7 @@ class ShiftAssignment(BaseModel):
 
     def calculate_hours(self):
         """Calculate hours worked for this assignment"""
-        if self.status != self.Status.SCHEDULED:
+        if self.status not in [self.Status.SCHEDULED, self.Status.CONFIRMED]:
             return 0
         return self.shift.get_duration_hours()
 
@@ -206,7 +205,10 @@ class ShiftAssignment(BaseModel):
             employee=self.employee,
             status=self.Status.SCHEDULED,
             shift__date=self.shift.date
-        ).exclude(id=self.id).select_related('shift')
+        )
+        if self.id is not None:
+            same_day_assignments = same_day_assignments.exclude(id=self.id)
+        same_day_assignments = same_day_assignments.select_related('shift')
 
         conflicts = []
         for assignment in same_day_assignments:
