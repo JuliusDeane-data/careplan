@@ -1,11 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import HomePage from '@/pages/HomePage'
-import LoginPage from '@/pages/LoginPage'
 import ProfilePage from '@/pages/ProfilePage'
 import DashboardPage from '@/pages/DashboardPage'
 import VacationListPage from '@/pages/vacation/VacationListPage'
@@ -26,8 +25,8 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <ErrorBoundary>
-
-      <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
         <AuthProvider>
           <Routes>
             {/* Public Routes */}
