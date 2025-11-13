@@ -230,7 +230,7 @@ export default function ProfilePage() {
                     Employment Type
                   </p>
                   <p className="font-medium">
-                    {user.employment_type?.replace('_', ' ') || 'N/A'}
+                    {user.employment_type?.replaceAll('_', ' ') || 'N/A'}
                   </p>
                 </div>
               </div>
