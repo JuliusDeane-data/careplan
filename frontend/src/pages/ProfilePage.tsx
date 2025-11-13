@@ -126,7 +126,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                   <Badge className={getStatusBadge()}>
-                    {user.employment_status?.replace('_', ' ')}
+                    {user.employment_status?.replaceAll('_', ' ')}
                   </Badge>
                 </div>
 
@@ -230,7 +230,7 @@ export default function ProfilePage() {
                     Employment Type
                   </p>
                   <p className="font-medium">
-                    {user.employment_type?.replace('_', ' ') || 'N/A'}
+                    {user.employment_type?.replaceAll('_', ' ') || 'N/A'}
                   </p>
                 </div>
               </div>
