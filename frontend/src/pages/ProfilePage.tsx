@@ -50,7 +50,13 @@ export default function ProfilePage() {
   // Calculate years of service
   const getYearsOfService = () => {
     if (!user.hire_date) return 'N/A'
-    const years = new Date().getFullYear() - new Date(user.hire_date).getFullYear()
+    const hireDate = new Date(user.hire_date)
+    const today = new Date()
+    let years = today.getFullYear() - hireDate.getFullYear()
+    const monthDiff = today.getMonth() - hireDate.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < hireDate.getDate())) {
+      years--
+    }
     return years === 1 ? '1 year' : `${years} years`
   }
 
