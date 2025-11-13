@@ -27,14 +27,14 @@ export default function ProfilePage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
-  if (!user) {
-    navigate('/login')
-    return null
-  }
-
   const handleLogout = async () => {
     await logout()
     navigate('/')
+  }
+
+  // User is guaranteed to exist due to ProtectedRoute wrapper
+  if (!user) {
+    return null
   }
 
   // Format date helper
