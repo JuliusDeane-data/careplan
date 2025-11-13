@@ -3,19 +3,17 @@
  */
 
 import { Badge } from '@/components/ui/badge'
-import type { CertificationStatus, ExpiryWarningLevel } from '@/types'
+import type { CertificationStatus } from '@/types'
 import { getCertificationStatusColor } from '@/config/certification.config'
 
 interface CertificationBadgeProps {
   status: CertificationStatus
-  warningLevel?: ExpiryWarningLevel
   daysUntilExpiry?: number | null
   className?: string
 }
 
 export function CertificationBadge({
   status,
-  warningLevel: _warningLevel,
   daysUntilExpiry,
   className,
 }: CertificationBadgeProps) {

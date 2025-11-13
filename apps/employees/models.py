@@ -104,6 +104,9 @@ class EmployeeQualification(BaseModel):
     Example: John Smith (employee) has ACLS (qualification) issued 2023-01-15, expires 2025-01-15
     """
 
+    # Threshold for expiry warning (in days)
+    EXPIRY_WARNING_DAYS = 30
+
     class CertificationStatus(models.TextChoices):
         """Status of this specific certification."""
         ACTIVE = 'ACTIVE', 'Active (Valid and current)'
@@ -202,8 +205,8 @@ class EmployeeQualification(BaseModel):
         if self.is_expired():
             return self.CertificationStatus.EXPIRED
 
-        # Check if expiring soon (within 30 days)
-        if self.is_expiring_soon(days=30):
+        # Check if expiring soon (within threshold days)
+        if self.is_expiring_soon(days=self.EXPIRY_WARNING_DAYS):
             return self.CertificationStatus.EXPIRING_SOON
 
         # Check verification for non-expired certs

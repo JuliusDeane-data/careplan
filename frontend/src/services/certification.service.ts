@@ -149,9 +149,7 @@ export const certificationService = {
       if (data.expiry_date) {
         formData.append('expiry_date', data.expiry_date)
       }
-      if (data.certificate_document) {
-        formData.append('certificate_document', data.certificate_document)
-      }
+      formData.append('certificate_document', data.certificate_document)
       if (data.notes) {
         formData.append('notes', data.notes)
       }
