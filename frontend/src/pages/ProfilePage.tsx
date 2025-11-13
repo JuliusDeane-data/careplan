@@ -22,10 +22,13 @@ import {
   CalendarDays,
   Building2,
 } from 'lucide-react'
+import { useMyCertifications } from '@/hooks/useCertifications'
+import { CertificationList } from '@/components/certifications/CertificationList'
 
 export default function ProfilePage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const { data: myCertifications, isLoading: certificationsLoading } = useMyCertifications()
 
   if (!user) {
     navigate('/login')
@@ -335,22 +338,22 @@ export default function ProfilePage() {
               <CardTitle className="flex items-center gap-2">
                 <Award className="w-5 h-5" />
                 Qualifications & Certifications
+                {myCertifications && myCertifications.length > 0 && (
+                  <Badge variant="outline" className="ml-2">
+                    {myCertifications.length}
+                  </Badge>
+                )}
               </CardTitle>
               <CardDescription>
                 Your professional certifications and training
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Award className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 dark:text-gray-400 mb-4">
-                  No qualifications recorded
-                </p>
-                <p className="text-sm text-gray-400 dark:text-gray-500">
-                  Contact your manager or HR to update your qualifications and
-                  certifications.
-                </p>
-              </div>
+              <CertificationList
+                certifications={myCertifications || []}
+                isLoading={certificationsLoading}
+                emptyMessage="No certifications recorded. Contact your manager or HR to add your qualifications and certifications."
+              />
             </CardContent>
           </Card>
         </div>

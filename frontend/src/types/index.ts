@@ -70,11 +70,110 @@ export interface Location {
 }
 
 // Qualification Types
+export type QualificationCategory = 'MUST_HAVE' | 'SPECIALIZED' | 'OPTIONAL'
+
 export interface Qualification {
   id: number
+  code: string
   name: string
   description?: string
+  category: QualificationCategory
+  required_for_roles?: string
   is_required: boolean
+  renewal_period_months?: number
+  renewal_period_display?: string
+  issuing_organization?: string
+  is_active: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface QualificationList {
+  id: number
+  code: string
+  name: string
+  category: QualificationCategory
+  is_required: boolean
+  is_active: boolean
+}
+
+// Certification Types
+export type CertificationStatus = 'ACTIVE' | 'EXPIRING_SOON' | 'EXPIRED' | 'PENDING_VERIFICATION'
+export type ExpiryWarningLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | null
+
+export interface EmployeeCertification {
+  id: number
+  employee: User
+  qualification: QualificationList
+  issue_date: string
+  expiry_date?: string
+  certificate_document?: string
+  verified_by?: User
+  verified_at?: string
+  status: CertificationStatus
+  notes?: string
+  days_until_expiry?: number | null
+  expiry_warning_level?: ExpiryWarningLevel
+  is_verified: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateEmployeeCertification {
+  qualification_id: number
+  employee_id?: number
+  issue_date: string
+  expiry_date?: string
+  certificate_document?: File
+  notes?: string
+}
+
+export interface UpdateEmployeeCertification {
+  issue_date?: string
+  expiry_date?: string
+  certificate_document?: File
+  notes?: string
+}
+
+export interface VerifyCertification {
+  verify: boolean
+  notes?: string
+}
+
+export interface ExpiringCertification {
+  id: number
+  employee: User
+  employee_name: string
+  employee_location?: {
+    id: number
+    name: string
+    code: string
+  }
+  qualification: QualificationList
+  issue_date: string
+  expiry_date?: string
+  days_until_expiry?: number | null
+  expiry_warning_level?: ExpiryWarningLevel
+  status: CertificationStatus
+}
+
+export interface CertificationComplianceReport {
+  total_certifications: number
+  status_breakdown: {
+    [key: string]: {
+      name: string
+      count: number
+    }
+  }
+  expiring_breakdown: {
+    critical: number
+    high: number
+    medium: number
+    low: number
+  }
+  pending_verification: number
+  expired: number
+  report_date: string
 }
 
 // Vacation Request Types

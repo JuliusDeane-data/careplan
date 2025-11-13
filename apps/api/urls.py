@@ -11,6 +11,7 @@ from apps.api.views.locations import LocationViewSet
 from apps.api.views.vacation import VacationRequestViewSet, PublicHolidayViewSet
 from apps.api.views.notifications import NotificationViewSet
 from apps.api.views.dashboard import dashboard_stats, health_check
+from apps.api.views.certifications import QualificationViewSet, EmployeeQualificationViewSet
 
 # Create router and register viewsets
 router = DefaultRouter()
@@ -19,6 +20,8 @@ router.register(r'locations', LocationViewSet, basename='location')
 router.register(r'vacation/requests', VacationRequestViewSet, basename='vacation-request')
 router.register(r'vacation/holidays', PublicHolidayViewSet, basename='public-holiday')
 router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'certifications/qualifications', QualificationViewSet, basename='qualification')
+router.register(r'certifications/employee-certifications', EmployeeQualificationViewSet, basename='employee-certification')
 
 urlpatterns = [
     # Authentication endpoints
