@@ -38,8 +38,8 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['role', 'employment_status', 'primary_location']
     search_fields = ['first_name', 'last_name', 'email', 'employee_id']
-    ordering_fields = ['created_at', 'first_name', 'last_name', 'hire_date']
-    ordering = ['-created_at']
+    ordering_fields = ['date_joined', 'first_name', 'last_name', 'hire_date']
+    ordering = ['-date_joined']
 
     def get_serializer_class(self):
         """Return appropriate serializer based on action"""

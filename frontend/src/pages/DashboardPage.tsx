@@ -82,15 +82,15 @@ export default function DashboardPage() {
             {/* Personal Stats */}
             <StatsCard
               title="Vacation Balance"
-              value={stats?.personal.vacation_balance.remaining || 0}
-              description={`of ${stats?.personal.vacation_balance.total || 0} days`}
+              value={stats?.personal?.vacation_balance?.remaining || 0}
+              description={`of ${stats?.personal?.vacation_balance?.total || 0} days`}
               icon={Calendar}
               iconColor="text-blue-600"
-              onClick={() => navigate('/vacation/request')}
+              onClick={() => navigate('/vacation/new')}
             />
             <StatsCard
               title="Pending Requests"
-              value={stats?.personal.pending_requests || 0}
+              value={stats?.personal?.pending_requests || 0}
               description="Awaiting approval"
               icon={Clock}
               iconColor="text-yellow-600"
@@ -98,7 +98,7 @@ export default function DashboardPage() {
             />
             <StatsCard
               title="Upcoming Vacations"
-              value={stats?.personal.upcoming_vacations || 0}
+              value={stats?.personal?.upcoming_vacations || 0}
               description="Next 30 days"
               icon={CalendarCheck}
               iconColor="text-green-600"
@@ -106,7 +106,7 @@ export default function DashboardPage() {
             />
             <StatsCard
               title="Used Days"
-              value={stats?.personal.vacation_balance.used || 0}
+              value={stats?.personal?.vacation_balance?.used || 0}
               description="This year"
               icon={CalendarClock}
               iconColor="text-purple-600"
