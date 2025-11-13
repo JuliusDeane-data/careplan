@@ -7,6 +7,7 @@ export interface User {
   employee_id: string
   role: 'ADMIN' | 'MANAGER' | 'EMPLOYEE'
   employment_status: 'ACTIVE' | 'ON_LEAVE' | 'TERMINATED'
+  employment_type?: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'TEMPORARY'
   is_active: boolean
   is_staff: boolean
   is_superuser: boolean
@@ -22,6 +23,9 @@ export interface User {
   emergency_contact_phone?: string
   hire_date?: string
   termination_date?: string
+  job_title?: string
+  department?: string
+  contract_hours_per_week?: number
   primary_location?: Location
   additional_locations?: Location[]
   qualifications?: Qualification[]
