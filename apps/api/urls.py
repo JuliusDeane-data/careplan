@@ -25,6 +25,8 @@ router.register(r'locations', LocationViewSet, basename='location')
 router.register(r'vacation/requests', VacationRequestViewSet, basename='vacation-request')
 router.register(r'vacation/holidays', PublicHolidayViewSet, basename='public-holiday')
 router.register(r'notifications', NotificationViewSet, basename='notification')
+router.register(r'certifications/qualifications', QualificationViewSet, basename='qualification')
+router.register(r'certifications/employee-certifications', EmployeeQualificationViewSet, basename='employee-certification')
 
 urlpatterns = [
     # Authentication endpoints
