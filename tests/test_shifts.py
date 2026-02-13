@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 
 from apps.shifts.models import Shift, ShiftAssignment, ShiftTemplate
 from apps.locations.models import Location
+from apps.employees.models import Qualification, EmployeeQualification
 # ============================================================================
 # FIXTURES
 # ============================================================================
@@ -683,13 +684,28 @@ class TestValidateCertificationRequirements:
     """
     Tests for certification validation.
     Staff must have valid certifications to be assigned to shifts.
-    
-    These tests should FAIL because the method is not yet implemented.
     """
 
     def test_nurse_with_valid_bls_can_be_assigned(self, day_shift, nurse, manager):
         """Test that a nurse with valid BLS certification can be assigned."""
-        # TODO: Would need to create certification for nurse
+        # Create BLS qualification
+        bls_qual = Qualification.objects.create(
+            code='BLS',
+            name='Basic Life Support',
+            category=Qualification.QualificationCategory.MUST_HAVE,
+            is_required=True,
+            renewal_period_months=24
+        )
+        
+        # Create active BLS certification for nurse
+        EmployeeQualification.objects.create(
+            employee=nurse,
+            qualification=bls_qual,
+            issue_date=date.today() - timedelta(days=180),  # Issued 6 months ago
+            expiry_date=date.today() + timedelta(days=550),  # Expires in ~18 months
+            status=EmployeeQualification.CertificationStatus.ACTIVE
+        )
+        
         assignment = ShiftAssignment(
             shift=day_shift,
             employee=nurse,
