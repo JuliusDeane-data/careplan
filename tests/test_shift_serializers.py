@@ -55,7 +55,10 @@ def location(db):
     from apps.locations.models import Location
     return Location.objects.create(
         name='ICU-1',
-        description='Intensive Care Unit 1'
+        address='123 Main St',
+        city='Test City',
+        postal_code='12345',
+        phone='555-123-4567',
     )
 
 
