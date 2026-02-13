@@ -24,6 +24,8 @@ def user_password():
 @pytest.fixture
 def create_user(db, user_password):
     """Factory fixture for creating users."""
+    _counter = {'value': 0}
+    
     def make_user(**kwargs):
         if 'password' not in kwargs:
             kwargs['password'] = user_password
@@ -31,7 +33,9 @@ def create_user(db, user_password):
             kwargs['email'] = f"user{User.objects.count() + 1}@example.com"
         if 'employee_id' not in kwargs:
             # Auto-generate unique employee_id if not provided
-            kwargs['employee_id'] = f"EMP{User.objects.count() + 1:03d}"
+            # Use a counter to ensure uniqueness even in concurrent scenarios
+            _counter['value'] += 1
+            kwargs['employee_id'] = f"EMP{_counter['value']:03d}"
 
         password = kwargs.pop('password')
         user = User(**kwargs)
