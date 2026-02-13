@@ -137,6 +137,31 @@ def shift_template(db, location, manager):
     )
 
 
+@pytest.fixture
+def bls_qualification(db):
+    """Create a BLS (Basic Life Support) qualification."""
+    return Qualification.objects.create(
+        code='BLS',
+        name='Basic Life Support',
+        category=Qualification.QualificationCategory.MUST_HAVE,
+        is_required=True,
+        renewal_period_months=24
+    )
+
+
+@pytest.fixture
+def nurse_with_bls(nurse, bls_qualification):
+    """Create a nurse with valid BLS certification."""
+    EmployeeQualification.objects.create(
+        employee=nurse,
+        qualification=bls_qualification,
+        issue_date=date.today() - timedelta(days=180),  # Issued 6 months ago
+        expiry_date=date.today() + timedelta(days=550),  # Expires in ~18 months
+        status=EmployeeQualification.CertificationStatus.ACTIVE
+    )
+    return nurse
+
+
 # ============================================================================
 # SHIFT MODEL CREATION TESTS
 # ============================================================================
@@ -686,29 +711,11 @@ class TestValidateCertificationRequirements:
     Staff must have valid certifications to be assigned to shifts.
     """
 
-    def test_nurse_with_valid_bls_can_be_assigned(self, day_shift, nurse, manager):
+    def test_nurse_with_valid_bls_can_be_assigned(self, day_shift, nurse_with_bls, manager):
         """Test that a nurse with valid BLS certification can be assigned."""
-        # Create BLS qualification
-        bls_qual = Qualification.objects.create(
-            code='BLS',
-            name='Basic Life Support',
-            category=Qualification.QualificationCategory.MUST_HAVE,
-            is_required=True,
-            renewal_period_months=24
-        )
-        
-        # Create active BLS certification for nurse
-        EmployeeQualification.objects.create(
-            employee=nurse,
-            qualification=bls_qual,
-            issue_date=date.today() - timedelta(days=180),  # Issued 6 months ago
-            expiry_date=date.today() + timedelta(days=550),  # Expires in ~18 months
-            status=EmployeeQualification.CertificationStatus.ACTIVE
-        )
-        
         assignment = ShiftAssignment(
             shift=day_shift,
-            employee=nurse,
+            employee=nurse_with_bls,
             role=ShiftAssignment.Role.NURSE,
             assigned_by=manager
         )
