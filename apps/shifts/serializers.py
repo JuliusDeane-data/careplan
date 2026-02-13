@@ -111,7 +111,7 @@ class ShiftAssignmentSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         """
         Validate assignment data.
-        Checks for duplicate assignments and conflicts.
+        Currently checks only for duplicate assignments (same employee on the same shift).
         """
         shift = attrs.get('shift') or (self.instance.shift if self.instance else None)
         employee = attrs.get('employee') or (self.instance.employee if self.instance else None)
