@@ -104,7 +104,8 @@ class TestEmployeeQualificationModel(TestCase):
             email='john.doe@example.com',
             password='testpass123',
             first_name='John',
-            last_name='Doe'
+            last_name='Doe',
+            employee_id='EMP2001'
         )
         self.qualification = Qualification.objects.create(
             code='ACLS',
@@ -116,7 +117,8 @@ class TestEmployeeQualificationModel(TestCase):
             email='admin@example.com',
             password='adminpass123',
             first_name='Admin',
-            last_name='User'
+            last_name='User',
+            employee_id='EMP2002'
         )
 
     def test_employee_qualification_creation(self):
@@ -282,7 +284,8 @@ class TestEmployeeQualificationModel(TestCase):
         employee2 = User.objects.create_user(
             username='jane.doe',
             email='jane.doe@example.com',
-            password='testpass123'
+            password='testpass123',
+            employee_id='EMP2003'
         )
         
         EmployeeQualification.objects.create(
