@@ -29,6 +29,10 @@ def create_user(db, user_password):
             kwargs['password'] = user_password
         if 'email' not in kwargs:
             kwargs['email'] = f"user{User.objects.count() + 1}@example.com"
+        if 'employee_id' not in kwargs:
+            # Auto-generate unique employee_id if not provided
+            count = User.objects.count() + 1
+            kwargs['employee_id'] = f"EMP{count:04d}"
 
         password = kwargs.pop('password')
         user = User(**kwargs)
