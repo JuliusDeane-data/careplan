@@ -10,7 +10,6 @@ Author: CarePlan Development Team
 import pytest
 from datetime import date, time, timedelta
 from django.contrib.auth import get_user_model
-from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from apps.shifts.models import Shift, ShiftAssignment, ShiftTemplate
 from apps.shifts.serializers import (

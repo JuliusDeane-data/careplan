@@ -3,10 +3,14 @@ Pytest configuration and shared fixtures for Careplan tests.
 """
 
 import pytest
+import itertools
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
 User = get_user_model()
+
+# Global counter for generating unique employee IDs
+_employee_id_counter = itertools.count(start=1)
 
 
 @pytest.fixture
@@ -30,8 +34,8 @@ def create_user(db, user_password):
         if 'email' not in kwargs:
             kwargs['email'] = f"user{User.objects.count() + 1}@example.com"
         if 'employee_id' not in kwargs:
-            # Auto-generate unique employee_id if not provided
-            kwargs['employee_id'] = f"EMP{User.objects.count() + 1:04d}"
+            # Auto-generate unique employee_id using a counter to avoid collisions
+            kwargs['employee_id'] = f"EMP{next(_employee_id_counter):04d}"
 
         password = kwargs.pop('password')
         user = User(**kwargs)
