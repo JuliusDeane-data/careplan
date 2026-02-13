@@ -461,7 +461,7 @@ class BulkAssignmentSerializer(serializers.Serializer):
         
         if invalid_ids:
             raise serializers.ValidationError(
-                f"Invalid employee IDs: {list(invalid_ids)}"
+                f"Invalid employee IDs: {sorted(invalid_ids)}"
             )
         
         return value
