@@ -7,15 +7,10 @@ Many will FAIL initially because validation methods are not yet implemented.
 
 import pytest
 from datetime import date, time, timedelta
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from apps.shifts.models import Shift, ShiftAssignment, ShiftTemplate
 from apps.locations.models import Location
-
-User = get_user_model()
-
-
 # ============================================================================
 # FIXTURES
 # ============================================================================
