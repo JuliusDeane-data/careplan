@@ -24,6 +24,8 @@ def user_password():
 @pytest.fixture
 def create_user(db, user_password):
     """Factory fixture for creating users."""
+    _counter = {'value': 0}
+    
     def make_user(**kwargs):
         if 'password' not in kwargs:
             kwargs['password'] = user_password

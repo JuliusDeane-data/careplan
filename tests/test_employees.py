@@ -103,6 +103,7 @@ class TestEmployeeQualificationModel(TestCase):
             username='john.doe',
             email='john.doe@example.com',
             password='testpass123',
+            employee_id='EMP001',
             first_name='John',
             last_name='Doe'
         )
@@ -115,6 +116,7 @@ class TestEmployeeQualificationModel(TestCase):
             username='admin.user',
             email='admin@example.com',
             password='adminpass123',
+            employee_id='EMP002',
             first_name='Admin',
             last_name='User'
         )
@@ -282,7 +284,8 @@ class TestEmployeeQualificationModel(TestCase):
         employee2 = User.objects.create_user(
             username='jane.doe',
             email='jane.doe@example.com',
-            password='testpass123'
+            password='testpass123',
+            employee_id='EMP003'
         )
         
         EmployeeQualification.objects.create(
