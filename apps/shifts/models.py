@@ -115,6 +115,47 @@ class Shift(BaseModel):
             return 100
         return int((self.get_assigned_count() / self.required_staff_count) * 100)
 
+    def validate_skill_mix(self):
+        """
+        Validate that the shift has an appropriate skill mix.
+        
+        According to staffing guidelines, shifts must have:
+        - At least 60% Registered Nurses (RN + Charge Nurse)
+        - Maximum 40% CNAs
+        
+        Returns:
+            bool: True if skill mix is valid
+            
+        Raises:
+            ValidationError: If skill mix requirements are not met
+        """
+        assignments = self.assignments.filter(status='SCHEDULED')
+        total_count = assignments.count()
+        
+        if total_count == 0:
+            return True  # No assignments yet, nothing to validate
+        
+        # Count RNs (includes NURSE and CHARGE_NURSE roles)
+        rn_count = assignments.filter(role__in=['NURSE', 'CHARGE_NURSE']).count()
+        cna_count = assignments.filter(role='CNA').count()
+        
+        rn_percentage = (rn_count / total_count) * 100
+        cna_percentage = (cna_count / total_count) * 100
+        
+        if rn_percentage < 60:
+            raise ValidationError(
+                f"Invalid skill mix: RN ratio is {rn_percentage:.0f}%, "
+                f"minimum 60% required. Current: {rn_count} RN(s) of {total_count} staff."
+            )
+        
+        if cna_percentage > 40:
+            raise ValidationError(
+                f"Invalid skill mix: CNA ratio is {cna_percentage:.0f}%, "
+                f"maximum 40% allowed. Current: {cna_count} CNA(s) of {total_count} staff."
+            )
+        
+        return True
+
     def clean(self):
         """Validate shift data"""
         if self.required_rn_count > self.required_staff_count:
@@ -228,6 +269,184 @@ class ShiftAssignment(BaseModel):
                 conflicts.append(assignment)
 
         return conflicts
+
+    def validate_minimum_rest_period(self):
+        """
+        Validate that the employee has sufficient rest between shifts.
+        
+        According to EU Working Time Directive, employees must have a minimum
+        of 11 consecutive hours of rest between shifts.
+        
+        Returns:
+            bool: True if rest period is sufficient
+            
+        Raises:
+            ValidationError: If rest period is less than 11 hours
+        """
+        MINIMUM_REST_HOURS = 11
+        
+        # Get shift start datetime
+        shift_start = datetime.combine(self.shift.date, self.shift.start_time)
+        
+        # Find the most recent previous shift assignment for this employee
+        previous_assignments = ShiftAssignment.objects.filter(
+            employee=self.employee,
+            status__in=[self.Status.SCHEDULED, self.Status.CONFIRMED]
+        ).exclude(
+            id=self.id if self.id else None
+        ).select_related('shift')
+        
+        # Calculate when each previous shift ends and find the latest one before this shift
+        latest_end = None
+        
+        for assignment in previous_assignments:
+            prev_shift = assignment.shift
+            prev_end = datetime.combine(prev_shift.date, prev_shift.end_time)
+            
+            # Handle overnight shifts (end time is next day)
+            if prev_shift.end_time <= prev_shift.start_time:
+                prev_end += timedelta(days=1)
+            
+            # Only consider shifts that end before this one starts
+            if prev_end <= shift_start:
+                if latest_end is None or prev_end > latest_end:
+                    latest_end = prev_end
+        
+        if latest_end is None:
+            # No previous shifts found
+            return True
+        
+        # Calculate rest period
+        rest_period = shift_start - latest_end
+        rest_hours = rest_period.total_seconds() / 3600
+        
+        if rest_hours < MINIMUM_REST_HOURS:
+            raise ValidationError(
+                f"Insufficient rest period: {rest_hours:.1f} hours between shifts. "
+                f"EU Working Time Directive requires minimum 11 hours rest period."
+            )
+        
+        return True
+
+    def validate_certification_requirements(self):
+        """
+        Validate that the employee has required certifications for this assignment.
+        
+        Requirements:
+        - All nursing staff must have valid BLS (Basic Life Support) certification
+        - Charge Nurses must have at least 5 years of experience
+        
+        Returns:
+            bool: True if all certification requirements are met
+            
+        Raises:
+            ValidationError: If required certifications are missing or invalid
+        """
+        from apps.employees.models import EmployeeQualification
+        
+        # Check for CHARGE_NURSE experience requirement
+        if self.role == self.Role.CHARGE_NURSE:
+            years_of_service = self.employee.years_of_service
+            if years_of_service is None or years_of_service < 5:
+                raise ValidationError(
+                    f"Charge Nurse role requires minimum 5 years of experience. "
+                    f"Employee has {years_of_service or 0} years."
+                )
+        
+        # Check for required BLS certification for nursing roles
+        if self.role in [self.Role.NURSE, self.Role.CHARGE_NURSE, self.Role.CNA]:
+            # Check if employee has active BLS certification
+            has_valid_bls = EmployeeQualification.objects.filter(
+                employee=self.employee,
+                qualification__code='BLS',
+                status__in=[
+                    EmployeeQualification.CertificationStatus.ACTIVE,
+                    EmployeeQualification.CertificationStatus.EXPIRING_SOON
+                ]
+            ).exists()
+            
+            if not has_valid_bls:
+                raise ValidationError(
+                    f"Employee {self.employee.get_full_name()} is missing required "
+                    f"BLS (Basic Life Support) certification for {self.get_role_display()} role."
+                )
+        
+        return True
+
+    def validate_max_consecutive_nights(self):
+        """
+        Validate that the employee does not exceed maximum consecutive night shifts.
+        
+        According to health and safety guidelines, staff should not work more
+        than 4 consecutive night shifts to prevent fatigue-related errors.
+        
+        Returns:
+            bool: True if consecutive nights limit is not exceeded
+            
+        Raises:
+            ValidationError: If this assignment would exceed 4 consecutive nights
+        """
+        MAX_CONSECUTIVE_NIGHTS = 4
+        
+        # Only applies to night shifts
+        if self.shift.shift_type != Shift.ShiftType.NIGHT:
+            return True
+        
+        shift_date = self.shift.date
+        
+        # Fetch all relevant night assignments around this date in a single query
+        window_start = shift_date - timedelta(days=MAX_CONSECUTIVE_NIGHTS)
+        window_end = shift_date + timedelta(days=MAX_CONSECUTIVE_NIGHTS)
+
+        night_assignments = (
+            ShiftAssignment.objects.filter(
+                employee=self.employee,
+                shift__date__range=(window_start, window_end),
+                shift__shift_type=Shift.ShiftType.NIGHT,
+                status__in=[self.Status.SCHEDULED, self.Status.CONFIRMED],
+            )
+            .exclude(id=self.id if self.id else None)
+        )
+
+        # Build a set of dates where the employee already has a qualifying night shift
+        night_dates = {
+            assignment.shift.date
+            for assignment in night_assignments
+        }
+        
+        # Count consecutive night shifts before this one
+        consecutive_before = 0
+        check_date = shift_date - timedelta(days=1)
+        
+        while (
+            consecutive_before < MAX_CONSECUTIVE_NIGHTS
+            and check_date in night_dates
+        ):
+            consecutive_before += 1
+            check_date -= timedelta(days=1)
+        
+        # Count consecutive night shifts after this one
+        consecutive_after = 0
+        check_date = shift_date + timedelta(days=1)
+        
+        while (
+            consecutive_after < MAX_CONSECUTIVE_NIGHTS
+            and check_date in night_dates
+        ):
+            consecutive_after += 1
+            check_date += timedelta(days=1)
+        
+        # Total consecutive nights including this assignment
+        total_consecutive = consecutive_before + 1 + consecutive_after
+        
+        if total_consecutive > MAX_CONSECUTIVE_NIGHTS:
+            raise ValidationError(
+                f"Cannot assign {total_consecutive} consecutive night shifts. "
+                f"Maximum allowed is {MAX_CONSECUTIVE_NIGHTS} consecutive nights "
+                f"to prevent fatigue-related errors."
+            )
+        
+        return True
 
 
 class ShiftTemplate(BaseModel):
