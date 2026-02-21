@@ -105,7 +105,8 @@ class TestEmployeeQualificationModel(TestCase):
             password='testpass123',
             employee_id='EMP001',
             first_name='John',
-            last_name='Doe'
+            last_name='Doe',
+            employee_id='EMP2001'
         )
         self.qualification = Qualification.objects.create(
             code='ACLS',
@@ -118,7 +119,8 @@ class TestEmployeeQualificationModel(TestCase):
             password='adminpass123',
             employee_id='EMP002',
             first_name='Admin',
-            last_name='User'
+            last_name='User',
+            employee_id='EMP2002'
         )
 
     def test_employee_qualification_creation(self):

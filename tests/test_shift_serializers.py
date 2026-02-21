@@ -25,26 +25,28 @@ User = get_user_model()
 
 
 @pytest.fixture
-def user(db):
+def user(create_user):
     """Create a test user"""
-    return User.objects.create_user(
+    return create_user(
         username='testuser',
         email='test@example.com',
         password='testpass123',
         first_name='John',
-        last_name='Doe'
+        last_name='Doe',
+        employee_id='EMP1001'
     )
 
 
 @pytest.fixture
-def manager(db):
+def manager(create_user):
     """Create a test manager user"""
-    return User.objects.create_user(
+    return create_user(
         username='manager',
         email='manager@example.com',
         password='managerpass123',
         first_name='Jane',
-        last_name='Manager'
+        last_name='Manager',
+        employee_id='EMP1002'
     )
 
 
@@ -459,12 +461,13 @@ class TestEmployeeMinimalSerializer:
         
         assert data['full_name'] == 'John Doe'
 
-    def test_full_name_fallback_to_username(self, db):
+    def test_full_name_fallback_to_username(self, create_user):
         """Verify full_name falls back to username when no names set"""
-        user_no_name = User.objects.create_user(
+        user_no_name = create_user(
             username='noname_user',
             email='noname@example.com',
-            password='testpass123'
+            password='testpass123',
+            employee_id='EMP9999'
         )
         serializer = EmployeeMinimalSerializer(user_no_name)
         data = serializer.data

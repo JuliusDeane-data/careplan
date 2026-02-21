@@ -3,10 +3,14 @@ Pytest configuration and shared fixtures for Careplan tests.
 """
 
 import pytest
+import itertools
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
 User = get_user_model()
+
+# Global counter for generating unique employee IDs
+_employee_id_counter = itertools.count(start=1)
 
 
 @pytest.fixture
@@ -51,6 +55,7 @@ def admin_user(create_user):
     return create_user(
         username='admin',
         email='admin@example.com',
+        employee_id='EMP0001',
         is_staff=True,
         is_superuser=True,
     )
