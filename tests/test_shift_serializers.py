@@ -10,7 +10,6 @@ Author: CarePlan Development Team
 import pytest
 from datetime import date, time, timedelta
 from django.contrib.auth import get_user_model
-from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from apps.shifts.models import Shift, ShiftAssignment, ShiftTemplate
 from apps.shifts.serializers import (
@@ -55,7 +54,10 @@ def location(db):
     from apps.locations.models import Location
     return Location.objects.create(
         name='ICU-1',
-        description='Intensive Care Unit 1'
+        address='123 Main St',
+        city='Test City',
+        postal_code='12345',
+        phone='555-123-4567',
     )
 
 

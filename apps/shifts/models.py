@@ -394,41 +394,47 @@ class ShiftAssignment(BaseModel):
         
         shift_date = self.shift.date
         
+        # Fetch all relevant night assignments around this date in a single query
+        window_start = shift_date - timedelta(days=MAX_CONSECUTIVE_NIGHTS)
+        window_end = shift_date + timedelta(days=MAX_CONSECUTIVE_NIGHTS)
+
+        night_assignments = (
+            ShiftAssignment.objects.filter(
+                employee=self.employee,
+                shift__date__range=(window_start, window_end),
+                shift__shift_type=Shift.ShiftType.NIGHT,
+                status__in=[self.Status.SCHEDULED, self.Status.CONFIRMED],
+            )
+            .exclude(id=self.id if self.id else None)
+        )
+
+        # Build a set of dates where the employee already has a qualifying night shift
+        night_dates = {
+            assignment.shift.date
+            for assignment in night_assignments
+        }
+        
         # Count consecutive night shifts before this one
         consecutive_before = 0
         check_date = shift_date - timedelta(days=1)
         
-        while True:
-            has_night = ShiftAssignment.objects.filter(
-                employee=self.employee,
-                shift__date=check_date,
-                shift__shift_type=Shift.ShiftType.NIGHT,
-                status__in=[self.Status.SCHEDULED, self.Status.CONFIRMED]
-            ).exclude(id=self.id if self.id else None).exists()
-            
-            if has_night:
-                consecutive_before += 1
-                check_date -= timedelta(days=1)
-            else:
-                break
+        while (
+            consecutive_before < MAX_CONSECUTIVE_NIGHTS
+            and check_date in night_dates
+        ):
+            consecutive_before += 1
+            check_date -= timedelta(days=1)
         
         # Count consecutive night shifts after this one
         consecutive_after = 0
         check_date = shift_date + timedelta(days=1)
         
-        while True:
-            has_night = ShiftAssignment.objects.filter(
-                employee=self.employee,
-                shift__date=check_date,
-                shift__shift_type=Shift.ShiftType.NIGHT,
-                status__in=[self.Status.SCHEDULED, self.Status.CONFIRMED]
-            ).exclude(id=self.id if self.id else None).exists()
-            
-            if has_night:
-                consecutive_after += 1
-                check_date += timedelta(days=1)
-            else:
-                break
+        while (
+            consecutive_after < MAX_CONSECUTIVE_NIGHTS
+            and check_date in night_dates
+        ):
+            consecutive_after += 1
+            check_date += timedelta(days=1)
         
         # Total consecutive nights including this assignment
         total_consecutive = consecutive_before + 1 + consecutive_after
