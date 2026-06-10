@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}{{ location.name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ location.name }}
+    <span class="badge {{ 'badge-green' if location.active else 'badge-red' }}">{{ 'aktiv' if location.active else 'inaktiv' }}</span>
+  </h1>
+  <form method="post" action="/standorte/{{ location.id }}/loeschen"
+        data-confirm="Standort „{{ location.name }}“ endgültig löschen? Alle Dienste und Pläne werden entfernt.">
+    <button type="submit" class="btn btn-danger">Löschen</button>
+  </form>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Stammdaten</h2>
+    <form method="post" action="/standorte/{{ location.id }}/bearbeiten" class="form-grid">
+      <label>Name *
+        <input name="name" required value="{{ location.name }}">
+      </label>
+      <div class="form-row">
+        <label>Adresse
+          <input name="address" value="{{ location.address }}">
+        </label>
+        <label>Ort
+          <input name="city" value="{{ location.city }}">
+        </label>
+      </div>
+      <label>Notizen
+        <textarea name="notes" rows="2">{{ location.notes }}</textarea>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" name="active" {{ 'checked' if location.active }}>
+        <span>Aktiv</span>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Speichern</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Dienste</h2>
+    <table class="table">
+      <thead><tr><th>Dienst</th><th>Zeit</th><th>Besetzung</th><th>Qualifikation</th><th></th></tr></thead>
+      <tbody>
+        {% for t in location.shift_templates if t.active %}
+        <tr>
+          <td><span class="badge {{ 'badge-yellow' if t.category.value == 'TAG' else 'badge-purple' }}">{{ t.name }}</span></td>
+          <td>{{ t.start_time.strftime('%H:%M') }}–{{ t.end_time.strftime('%H:%M') }}{% if t.crosses_midnight %} (+1){% endif %}</td>
+          <td>{{ t.staff_needed }}</td>
+          <td>{{ t.required_qualification.code if t.required_qualification else '–' }}</td>
+          <td>
+            <form method="post" action="/standorte/{{ location.id }}/dienste/{{ t.id }}/loeschen"
+                  data-confirm="Dienst „{{ t.name }}“ löschen? Zugehörige Planeinträge werden entfernt.">
+              <button type="submit" class="btn btn-sm btn-ghost">✕</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">Keine Dienste definiert.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h3>Dienst hinzufügen</h3>
+    <form method="post" action="/standorte/{{ location.id }}/dienste" class="inline-form">
+      <input name="name" placeholder="Name" required>
+      <select name="category">
+        {% for c in categories %}<option value="{{ c.value }}">{{ 'Tagdienst' if c.value == 'TAG' else 'Nachtdienst' }}</option>{% endfor %}
+      </select>
+      <input type="time" name="start_time_str" value="08:00" required>
+      <input type="time" name="end_time_str" value="20:00" required>
+      <input type="number" name="staff_needed" value="1" min="1" max="10" title="Besetzung">
+      <select name="required_qualification_id" title="Erforderliche Qualifikation">
+        <option value="">– keine Anforderung –</option>
+        {% for q in qualifications %}<option value="{{ q.id }}">{{ q.code }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary">Hinzufügen</button>
+    </form>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Team ({{ location.employees|length }})</h2>
+    <form method="post" action="/standorte/{{ location.id }}/mitarbeiter" class="inline-form">
+      <select name="employee_id" required>
+        <option value="">– Mitarbeiter auswählen –</option>
+        {% for e in available_employees %}
+        <option value="{{ e.id }}">{{ e.last_name }}, {{ e.first_name }}
+          ({% for qual in e.qualifications %}{{ qual.code }}{% if not loop.last %}, {% endif %}{% endfor %})</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary">Zuweisen</button>
+    </form>
+    <table class="table">
+      <thead><tr><th>Name</th><th>Qualifikationen</th><th>Std./Woche</th><th></th></tr></thead>
+      <tbody>
+        {% for e in location.employees|sort(attribute='last_name') %}
+        <tr>
+          <td><a href="/mitarbeiter/{{ e.id }}">{{ e.last_name }}, {{ e.first_name }}</a></td>
+          <td>{% for qual in e.qualifications %}<span class="badge badge-blue">{{ qual.code }}</span> {% endfor %}</td>
+          <td>{{ ('%g'|format(e.weekly_hours)).replace('.', ',') }}</td>
+          <td>
+            <form method="post" action="/standorte/{{ location.id }}/mitarbeiter/{{ e.id }}/entfernen"
+                  data-confirm="{{ e.full_name }} vom Standort entfernen?">
+              <button type="submit" class="btn btn-sm btn-ghost">✕</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="muted">Noch kein Team zugewiesen.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Dienstpläne</h2>
+    <table class="table">
+      <thead><tr><th>Monat</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for p in plans %}
+        <tr>
+          <td><a href="/dienstplaene/{{ p.id }}">{{ p.month|monthname }} {{ p.year }}</a></td>
+          <td><span class="badge {{ 'badge-green' if p.status.value == 'VEROEFFENTLICHT' else 'badge-gray' }}">{{ 'Veröffentlicht' if p.status.value == 'VEROEFFENTLICHT' else 'Entwurf' }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="2" class="muted">Noch keine Pläne – <a href="/dienstplaene">anlegen</a>.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}{{ plan.location.name }} – {{ plan.month|monthname }} {{ plan.year }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ plan.location.name }} – {{ plan.month|monthname }} {{ plan.year }}
+    <span class="badge {{ 'badge-green' if plan.status.value == 'VEROEFFENTLICHT' else 'badge-gray' }}">
+      {{ 'Veröffentlicht' if plan.status.value == 'VEROEFFENTLICHT' else 'Entwurf' }}</span>
+  </h1>
+  <div class="btn-group">
+    <form method="post" action="/dienstplaene/{{ plan.id }}/generieren">
+      <button type="submit" class="btn btn-primary" data-loading="Plane … (bis zu 15 s)">⚙ Automatisch planen</button>
+    </form>
+    <form method="post" action="/dienstplaene/{{ plan.id }}/status">
+      <button type="submit" class="btn">{{ 'Zurück zu Entwurf' if plan.status.value == 'VEROEFFENTLICHT' else 'Veröffentlichen' }}</button>
+    </form>
+    <form method="post" action="/dienstplaene/{{ plan.id }}/leeren"
+          data-confirm="Wirklich alle Zuweisungen (auch fixierte) entfernen?">
+      <button type="submit" class="btn btn-ghost">Leeren</button>
+    </form>
+    <form method="post" action="/dienstplaene/{{ plan.id }}/loeschen"
+          data-confirm="Diesen Dienstplan endgültig löschen?">
+      <button type="submit" class="btn btn-danger">Löschen</button>
+    </form>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value">{{ summary.fill_rate|round|int }}&nbsp;%</div>
+    <div class="stat-label">Besetzung ({{ summary.assigned_total }} von {{ summary.needed_total }} Diensten)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value {{ 'text-red' if error_count }}">{{ error_count }}</div>
+    <div class="stat-label">Regelverstöße</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value {{ 'text-yellow' if warn_count }}">{{ warn_count }}</div>
+    <div class="stat-label">Warnungen</div>
+  </div>
+</div>
+
+<div class="card schedule-card">
+  <p class="muted hint">Manuelle Änderungen werden fixiert 📌 und bei automatischer
+    Neuplanung beibehalten. Rot markierte Zuweisungen verletzen Arbeitszeitregeln.</p>
+  <div class="table-scroll">
+  <table class="table schedule-table">
+    <thead>
+      <tr>
+        <th class="day-col">Tag</th>
+        {% for t in shift_templates %}
+        <th>
+          <span class="badge {{ 'badge-yellow' if t.category.value == 'TAG' else 'badge-purple' }}">{{ t.name }}</span>
+          <div class="muted small">{{ t.start_time.strftime('%H:%M') }}–{{ t.end_time.strftime('%H:%M') }}{% if t.crosses_midnight %} (+1){% endif %}
+            · {{ t.staff_needed }}×{% if t.required_qualification %} · {{ t.required_qualification.code }}{% endif %}</div>
+        </th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for day in days %}
+      <tr class="{{ 'weekend' if day.weekday() >= 5 }}">
+        <td class="day-col"><strong>{{ day|wd }}</strong> {{ day.strftime('%d.%m.') }}</td>
+        {% for t in shift_templates %}
+        {% set assignments = cells.get((day, t.id), []) %}
+        <td>
+          {% for a in assignments %}
+          <form method="post" action="/dienstplaene/{{ plan.id }}/zuweisung"
+                class="slot {{ 'slot-violation' if (day, a.employee_id) in violation_cells }}">
+            <input type="hidden" name="day" value="{{ day.isoformat() }}">
+            <input type="hidden" name="template_id" value="{{ t.id }}">
+            <input type="hidden" name="assignment_id" value="{{ a.id }}">
+            <select name="employee_id" onchange="this.form.submit()" title="{{ a.employee.full_name }}">
+              <option value="">– entfernen –</option>
+              {% for e in location_employees %}
+              <option value="{{ e.id }}" {{ 'selected' if e.id == a.employee_id }}>
+                {{ e.last_name }}, {{ e.first_name[:1] }}.{{ ' ⛔' if e.id in absent[day] }}</option>
+              {% endfor %}
+            </select>
+            {% if a.pinned %}<span class="pin" title="Fixiert – bleibt bei Neuplanung erhalten">📌</span>{% endif %}
+          </form>
+          {% endfor %}
+          {% for _ in range(t.staff_needed - assignments|length) %}
+          <form method="post" action="/dienstplaene/{{ plan.id }}/zuweisung" class="slot slot-empty">
+            <input type="hidden" name="day" value="{{ day.isoformat() }}">
+            <input type="hidden" name="template_id" value="{{ t.id }}">
+            <input type="hidden" name="assignment_id" value="">
+            <select name="employee_id" onchange="this.form.submit()">
+              <option value="" selected>– offen –</option>
+              {% for e in location_employees %}
+              <option value="{{ e.id }}">{{ e.last_name }}, {{ e.first_name[:1] }}.{{ ' ⛔' if e.id in absent[day] }}</option>
+              {% endfor %}
+            </select>
+          </form>
+          {% endfor %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Stundenkonto</h2>
+    <table class="table">
+      <thead>
+        <tr><th>Mitarbeiter</th><th>Dienste</th><th>Nächte</th><th>WE</th>
+            <th>Geplant</th><th>Soll</th><th>Differenz</th></tr>
+      </thead>
+      <tbody>
+        {% for row in summary.per_employee %}
+        <tr>
+          <td><a href="/mitarbeiter/{{ row.employee.id }}">{{ row.employee.full_name }}</a></td>
+          <td>{{ row.shifts }}</td>
+          <td>{{ row.nights }}</td>
+          <td>{{ row.weekend_shifts }}</td>
+          <td>{{ row.total_minutes|hours }} h
+            {% if row.external_minutes %}<span class="muted small">(davon {{ row.external_minutes|hours }} h andere Standorte)</span>{% endif %}
+          </td>
+          <td>{{ row.target_minutes|hours }} h</td>
+          <td class="{{ 'text-red' if row.diff_minutes > 0 else ('text-yellow' if row.diff_minutes < -720) }}">
+            {{ row.diff_minutes|signed_hours }} h</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="muted">Noch keine Zuweisungen.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Regelprüfung (ArbZG)</h2>
+    {% if violations %}
+    <table class="table">
+      <thead><tr><th>Schwere</th><th>Mitarbeiter</th><th>Hinweis</th></tr></thead>
+      <tbody>
+        {% for v in violations|sort(attribute='day') %}
+        <tr>
+          <td><span class="badge {{ 'badge-red' if v.severity == 'ERROR' else 'badge-yellow' }}">
+            {{ 'Verstoß' if v.severity == 'ERROR' else 'Warnung' }}</span></td>
+          <td>{{ v.employee_name }}</td>
+          <td>{{ v.message }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">✓ Keine Regelverstöße – der Plan erfüllt alle hinterlegten
+      Arbeitszeitregeln (11h Ruhezeit, max. Folgetage/-nächte, Wochen- und Monatsstunden).</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Mitarbeiter bearbeiten' if employee and employee.id else 'Mitarbeiter anlegen' }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ 'Mitarbeiter bearbeiten' if employee and employee.id else 'Mitarbeiter anlegen' }}</h1>
+</div>
+
+{% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+
+<form method="post" class="card form-grid">
+  <fieldset>
+    <legend>Stammdaten</legend>
+    <div class="form-row">
+      <label>Vorname *
+        <input name="first_name" required value="{{ employee.first_name if employee else '' }}">
+      </label>
+      <label>Nachname *
+        <input name="last_name" required value="{{ employee.last_name if employee else '' }}">
+      </label>
+    </div>
+    <div class="form-row">
+      <label>E-Mail
+        <input type="email" name="email" value="{{ employee.email or '' if employee else '' }}">
+      </label>
+      <label>Telefon
+        <input name="phone" value="{{ employee.phone or '' if employee else '' }}">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Beschäftigung</legend>
+    <div class="form-row">
+      <label>Beschäftigungsart
+        <select name="employment_type">
+          {% for t in employment_types %}
+          <option value="{{ t.value }}" {{ 'selected' if employee and employee.employment_type == t }}>{{ t.value|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Wochenstunden (Vertrag)
+        <input name="weekly_hours" type="number" step="0.5" min="1" max="48"
+               value="{{ employee.weekly_hours if employee else 40 }}">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Qualifikationen</legend>
+    <div class="checkbox-grid">
+      {% for qual in qualifications %}
+      <label class="checkbox">
+        <input type="checkbox" name="qualifications" value="{{ qual.id }}"
+               {{ 'checked' if employee and qual in employee.qualifications }}>
+        <span><strong>{{ qual.code }}</strong> – {{ qual.name }}</span>
+      </label>
+      {% else %}
+      <p class="muted">Noch keine Qualifikationen definiert – <a href="/qualifikationen">hier anlegen</a>.</p>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dienst-Präferenzen</legend>
+    <div class="form-row">
+      <label>Tagdienst
+        <select name="pref_day">
+          {% for p in preferences %}
+          <option value="{{ p.value }}" {{ 'selected' if employee and employee.pref_day == p }}>{{ p.value|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Nachtdienst
+        <select name="pref_night">
+          {% for p in preferences %}
+          <option value="{{ p.value }}" {{ 'selected' if employee and employee.pref_night == p }}>{{ p.value|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="form-row">
+      <label>Max. Arbeitstage in Folge
+        <input name="max_consecutive_days" type="number" min="1" max="6"
+               value="{{ employee.max_consecutive_days if employee else 6 }}">
+      </label>
+      <label>Max. Nachtdienste in Folge
+        <input name="max_consecutive_nights" type="number" min="1" max="5"
+               value="{{ employee.max_consecutive_nights if employee else 4 }}">
+      </label>
+    </div>
+    <div>
+      <div class="field-label">Gesperrte Wochentage (an diesen Tagen nie einplanen)</div>
+      <div class="checkbox-row">
+        {% for label in weekday_labels %}
+        <label class="checkbox">
+          <input type="checkbox" name="blocked_weekdays" value="{{ loop.index0 }}"
+                 {{ 'checked' if employee and loop.index0 in employee.blocked_weekday_set }}>
+          <span>{{ label[:2] }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Standorte</legend>
+    <div class="checkbox-grid">
+      {% for loc in locations %}
+      <label class="checkbox">
+        <input type="checkbox" name="locations" value="{{ loc.id }}"
+               {{ 'checked' if employee and loc in employee.locations }}>
+        <span>{{ loc.name }}</span>
+      </label>
+      {% else %}
+      <p class="muted">Noch keine Standorte angelegt – <a href="/standorte/neu">hier anlegen</a>.</p>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Sonstiges</legend>
+    <label class="checkbox">
+      <input type="checkbox" name="active" {{ 'checked' if not employee or employee.active }}>
+      <span>Aktiv (wird bei der Planung berücksichtigt)</span>
+    </label>
+    <label>Notizen
+      <textarea name="notes" rows="3">{{ employee.notes if employee else '' }}</textarea>
+    </label>
+  </fieldset>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Speichern</button>
+    <a href="{{ '/mitarbeiter/' ~ employee.id if employee and employee.id else '/mitarbeiter' }}" class="btn btn-ghost">Abbrechen</a>
+  </div>
+</form>
+{% endblock %}

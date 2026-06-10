@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Übersicht{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Übersicht</h1>
+  <div class="muted">{{ today|d }}</div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value">{{ employee_count }}</div>
+    <div class="stat-label">Aktive Mitarbeiter</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ location_count }}</div>
+    <div class="stat-label">Aktive Standorte</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ plan_cards|length }}</div>
+    <div class="stat-label">Dienstpläne im aktuellen Monat</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Dienstpläne {{ today.month|monthname }} {{ today.year }}</h2>
+    {% if plan_cards %}
+    <table class="table">
+      <thead><tr><th>Standort</th><th>Besetzung</th><th>Status</th><th>Hinweise</th></tr></thead>
+      <tbody>
+        {% for c in plan_cards %}
+        <tr>
+          <td><a href="/dienstplaene/{{ c.plan.id }}">{{ c.plan.location.name }}</a></td>
+          <td>
+            <div class="fill-bar"><div class="fill-bar-inner {{ 'ok' if c.fill_rate >= 99.5 else 'warn' }}" style="width: {{ c.fill_rate|round|int }}%"></div></div>
+            {{ c.fill_rate|round|int }}&nbsp;%
+          </td>
+          <td><span class="badge {{ 'badge-green' if c.plan.status.value == 'VEROEFFENTLICHT' else 'badge-gray' }}">{{ 'Veröffentlicht' if c.plan.status.value == 'VEROEFFENTLICHT' else 'Entwurf' }}</span></td>
+          <td>
+            {% if c.errors %}<span class="badge badge-red">{{ c.errors }} Verstöße</span>{% endif %}
+            {% if c.warnings %}<span class="badge badge-yellow">{{ c.warnings }} Warnungen</span>{% endif %}
+            {% if not c.errors and not c.warnings %}<span class="muted">–</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">Für den aktuellen Monat existieren noch keine Dienstpläne.
+      <a href="/dienstplaene">Jetzt anlegen</a></p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Abwesenheiten (nächste 30 Tage)</h2>
+    {% if upcoming_absences %}
+    <table class="table">
+      <thead><tr><th>Mitarbeiter</th><th>Art</th><th>Zeitraum</th></tr></thead>
+      <tbody>
+        {% for a in upcoming_absences %}
+        <tr>
+          <td><a href="/mitarbeiter/{{ a.employee.id }}">{{ a.employee.full_name }}</a></td>
+          <td>{{ a.type.value|capitalize }}</td>
+          <td>{{ a.start_date|d }} – {{ a.end_date|d }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted">Keine anstehenden Abwesenheiten.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

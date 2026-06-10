@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Mitarbeiter{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Mitarbeiter</h1>
+  <a href="/mitarbeiter/neu" class="btn btn-primary">+ Mitarbeiter anlegen</a>
+</div>
+
+<form method="get" class="search-bar">
+  <input type="search" name="q" value="{{ q }}" placeholder="Name suchen …">
+  <button type="submit" class="btn">Suchen</button>
+</form>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th><th>Qualifikationen</th><th>Std./Woche</th>
+        <th>Präferenz</th><th>Standorte</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in employees %}
+      <tr>
+        <td><a href="/mitarbeiter/{{ e.id }}"><strong>{{ e.last_name }}, {{ e.first_name }}</strong></a></td>
+        <td>
+          {% for qual in e.qualifications %}<span class="badge badge-blue" title="{{ qual.name }}">{{ qual.code }}</span> {% endfor %}
+        </td>
+        <td>{{ ('%g'|format(e.weekly_hours)).replace('.', ',') }}</td>
+        <td>
+          {% if e.pref_day.value == 'BEVORZUGT' %}<span class="badge badge-green">Tag ♥</span>{% endif %}
+          {% if e.pref_night.value == 'BEVORZUGT' %}<span class="badge badge-green">Nacht ♥</span>{% endif %}
+          {% if e.pref_day.value == 'AUSGESCHLOSSEN' %}<span class="badge badge-red">kein Tag</span>{% endif %}
+          {% if e.pref_night.value == 'AUSGESCHLOSSEN' %}<span class="badge badge-red">keine Nacht</span>{% endif %}
+        </td>
+        <td>
+          {% for loc in e.locations %}<span class="badge badge-gray">{{ loc.name }}</span> {% endfor %}
+        </td>
+        <td>
+          <span class="badge {{ 'badge-green' if e.active else 'badge-red' }}">{{ 'aktiv' if e.active else 'inaktiv' }}</span>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="muted">Noch keine Mitarbeiter angelegt.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Standorte{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Standorte</h1>
+  <a href="/standorte/neu" class="btn btn-primary">+ Standort anlegen</a>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr><th>Name</th><th>Adresse</th><th>Dienste</th><th>Team</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for loc in locations %}
+      <tr>
+        <td><a href="/standorte/{{ loc.id }}"><strong>{{ loc.name }}</strong></a></td>
+        <td>{{ loc.address }}{% if loc.city %}, {{ loc.city }}{% endif %}</td>
+        <td>
+          {% for t in loc.shift_templates if t.active %}
+          <span class="badge {{ 'badge-yellow' if t.category.value == 'TAG' else 'badge-purple' }}">{{ t.name }}</span>
+          {% endfor %}
+        </td>
+        <td>{{ loc.employees|length }} Mitarbeiter</td>
+        <td><span class="badge {{ 'badge-green' if loc.active else 'badge-red' }}">{{ 'aktiv' if loc.active else 'inaktiv' }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">Noch keine Standorte angelegt.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

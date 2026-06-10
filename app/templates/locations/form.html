@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Standort anlegen{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Standort anlegen</h1></div>
+
+<form method="post" action="/standorte/neu" class="card form-grid">
+  <label>Name *
+    <input name="name" required placeholder="z. B. WG Sonnenhof oder Familie Müller (1:1)">
+  </label>
+  <div class="form-row">
+    <label>Adresse
+      <input name="address">
+    </label>
+    <label>Ort
+      <input name="city">
+    </label>
+  </div>
+  <label>Notizen
+    <textarea name="notes" rows="3" placeholder="z. B. Beatmungspflicht, Besonderheiten der Versorgung"></textarea>
+  </label>
+  <p class="muted">Beim Anlegen werden automatisch ein Tagdienst (08–20 Uhr) und ein
+    Nachtdienst (20–08 Uhr) mit Besetzung 1 erstellt – anpassbar auf der Detailseite.</p>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Anlegen</button>
+    <a href="/standorte" class="btn btn-ghost">Abbrechen</a>
+  </div>
+</form>
+{% endblock %}

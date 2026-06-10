@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dienstpläne{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Dienstpläne</h1></div>
+
+<div class="card">
+  <h2>Neuen Plan anlegen</h2>
+  <form method="post" action="/dienstplaene" class="inline-form">
+    <select name="location_id" required>
+      <option value="">– Standort auswählen –</option>
+      {% for loc in locations %}<option value="{{ loc.id }}">{{ loc.name }}</option>{% endfor %}
+    </select>
+    <input type="month" name="month" value="{{ default_month }}" required>
+    <button type="submit" class="btn btn-primary">Anlegen</button>
+  </form>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Standort</th><th>Monat</th><th>Status</th><th>Zuletzt geändert</th></tr></thead>
+    <tbody>
+      {% for p in plans %}
+      <tr>
+        <td><a href="/dienstplaene/{{ p.id }}"><strong>{{ p.location.name }}</strong></a></td>
+        <td>{{ p.month|monthname }} {{ p.year }}</td>
+        <td><span class="badge {{ 'badge-green' if p.status.value == 'VEROEFFENTLICHT' else 'badge-gray' }}">{{ 'Veröffentlicht' if p.status.value == 'VEROEFFENTLICHT' else 'Entwurf' }}</span></td>
+        <td class="muted">{{ p.updated_at.strftime('%d.%m.%Y %H:%M') }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="muted">Noch keine Dienstpläne angelegt.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

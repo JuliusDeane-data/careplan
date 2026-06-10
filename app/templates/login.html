@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anmelden – CarePlan</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <div class="brand brand-center">
+      <span class="brand-icon">✚</span>
+      <div>
+        <div class="brand-name">CarePlan</div>
+        <div class="brand-sub">Außerklinische Intensivpflege</div>
+      </div>
+    </div>
+    {% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
+    <form method="post" action="/login">
+      <label>E-Mail
+        <input type="email" name="email" required autofocus>
+      </label>
+      <label>Passwort
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit" class="btn btn-primary btn-block">Anmelden</button>
+    </form>
+  </div>
+</body>
+</html>

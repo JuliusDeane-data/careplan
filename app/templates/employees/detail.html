@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ employee.full_name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ employee.full_name }}
+    <span class="badge {{ 'badge-green' if employee.active else 'badge-red' }}">{{ 'aktiv' if employee.active else 'inaktiv' }}</span>
+  </h1>
+  <div class="btn-group">
+    <a href="/mitarbeiter/{{ employee.id }}/bearbeiten" class="btn btn-primary">Bearbeiten</a>
+    <form method="post" action="/mitarbeiter/{{ employee.id }}/loeschen"
+          data-confirm="Mitarbeiter:in „{{ employee.full_name }}“ endgültig löschen? Alle Zuweisungen werden entfernt.">
+      <button type="submit" class="btn btn-danger">Löschen</button>
+    </form>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Stammdaten</h2>
+    <dl class="dl">
+      <dt>E-Mail</dt><dd>{{ employee.email or '–' }}</dd>
+      <dt>Telefon</dt><dd>{{ employee.phone or '–' }}</dd>
+      <dt>Beschäftigung</dt><dd>{{ employee.employment_type.value|capitalize }}, {{ ('%g'|format(employee.weekly_hours)).replace('.', ',') }} Std./Woche</dd>
+      <dt>Qualifikationen</dt>
+      <dd>{% for qual in employee.qualifications %}<span class="badge badge-blue">{{ qual.code }}</span> {% else %}–{% endfor %}</dd>
+      <dt>Standorte</dt>
+      <dd>{% for loc in employee.locations %}<a href="/standorte/{{ loc.id }}" class="badge badge-gray">{{ loc.name }}</a> {% else %}–{% endfor %}</dd>
+      <dt>Notizen</dt><dd>{{ employee.notes or '–' }}</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <h2>Planungsregeln</h2>
+    <dl class="dl">
+      <dt>Tagdienst</dt><dd>{{ employee.pref_day.value|capitalize }}</dd>
+      <dt>Nachtdienst</dt><dd>{{ employee.pref_night.value|capitalize }}</dd>
+      <dt>Max. Tage in Folge</dt><dd>{{ employee.max_consecutive_days }}</dd>
+      <dt>Max. Nächte in Folge</dt><dd>{{ employee.max_consecutive_nights }}</dd>
+      <dt>Gesperrte Wochentage</dt>
+      <dd>
+        {% set blocked = employee.blocked_weekday_set %}
+        {% if blocked %}{% for label in weekday_labels %}{% if loop.index0 in blocked %}<span class="badge badge-red">{{ label }}</span> {% endif %}{% endfor %}
+        {% else %}–{% endif %}
+      </dd>
+    </dl>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Abwesenheiten</h2>
+  <form method="post" action="/mitarbeiter/{{ employee.id }}/abwesenheiten" class="inline-form">
+    <select name="type">
+      {% for t in absence_types %}<option value="{{ t.value }}">{{ t.value|capitalize }}</option>{% endfor %}
+    </select>
+    <input type="date" name="start_date" required>
+    <input type="date" name="end_date" required>
+    <input name="note" placeholder="Notiz (optional)">
+    <button type="submit" class="btn btn-primary">Eintragen</button>
+  </form>
+  <table class="table">
+    <thead><tr><th>Art</th><th>Von</th><th>Bis</th><th>Notiz</th><th></th></tr></thead>
+    <tbody>
+      {% for a in absences %}
+      <tr class="{{ 'muted' if a.end_date < today }}">
+        <td>{{ a.type.value|capitalize }}</td>
+        <td>{{ a.start_date|d }}</td>
+        <td>{{ a.end_date|d }}</td>
+        <td>{{ a.note or '–' }}</td>
+        <td>
+          <form method="post" action="/mitarbeiter/{{ employee.id }}/abwesenheiten/{{ a.id }}/loeschen"
+                data-confirm="Abwesenheit löschen?">
+            <button type="submit" class="btn btn-sm btn-ghost">✕</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">Keine Abwesenheiten eingetragen.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
